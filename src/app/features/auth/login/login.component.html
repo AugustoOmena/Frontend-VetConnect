@@ -1,0 +1,46 @@
+<div class="container" style="margin-top: 10%; max-width: 600px;">
+  <div class="center-column shadow-lg">
+    <div class="content">
+      <h2 class="title-content-size font-dark">Login</h2>
+      <div class="glass-container">
+       
+        <div class="card-body">
+            <form [formGroup]="loginForm">
+                <div >
+                    <app-input [showTip]="false">
+                        <input type="text" formControlName="email" class="form-control" placeholder="Email"
+                            [ngClass]="{'is-invalid': loginForm.get('email')?.invalid && loginForm.get('email')?.touched}">
+                        <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                    </app-input>
+                    <br>
+                    <app-input [showTip]="false">
+                        <input type="password" formControlName="password" class="form-control" placeholder="Password"
+                            [ngClass]="{'is-invalid': loginForm.get('password')?.invalid && loginForm.get('password')?.touched}">
+                        <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                    </app-input>
+                </div>
+                <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+                <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+                <div style="display: flex; justify-content: center; padding-top: 3%;">
+                    <div class="buttonLogin contorno" style="padding: 0;">
+                        <button (click)="login()" [disabled]="loginForm.invalid" class="btn" style="border: none">Login</button>
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: center; padding-top: 3%;">
+                    <a href="auth">
+                        <p style="color: black; cursor: pointer;" >Cadastrar-se</p>
+                    </a>
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
+ 
+    </div>
+
+</div>
+
+<!-- <div class="cursor .lg\:absolute"></div> -->
+  
+  
