@@ -1,1 +1,71 @@
-<p>register works!</p>
+<div class="container" style="margin-top: 6%; max-width: 600px;">
+    <div class="center-column shadow-lg">
+      <div class="content">
+        <h2 class="title-content-size font-dark">Cadastro</h2>
+        <div class="glass-container">
+         
+          <div class="card-body">
+              <form [formGroup]="registerForm">
+                  <div >
+
+                    <app-input [showTip]="false">
+                        <input type="firstName" formControlName="firstName" class="form-control" placeholder="Primeiro Nome"
+                            [ngClass]="{'is-invalid': registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched}">
+                        <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                    </app-input>
+
+                    <app-input [showTip]="false">
+                        <input type="lastName" formControlName="lastName" class="form-control" placeholder="Último Nome"
+                            [ngClass]="{'is-invalid': registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched}">
+                        <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                    </app-input>
+
+                    <app-input [showTip]="false">
+                        <input type="phone" formControlName="phone" class="form-control" placeholder="Telefone"
+                            [ngClass]="{'is-invalid': registerForm.get('phone')?.invalid && registerForm.get('phone')?.touched}">
+                        <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                    </app-input>
+
+                      <app-input [showTip]="false">
+                          <input type="text" formControlName="email" class="form-control" placeholder="Email"
+                              [ngClass]="{'is-invalid': registerForm.get('email')?.invalid && registerForm.get('email')?.touched}">
+                          <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                      </app-input>
+                      <br>
+                      <app-input [showTip]="false">
+                          <input type="password" formControlName="password" class="form-control" placeholder="Senha"
+                              [ngClass]="{'is-invalid': registerForm.get('password')?.invalid && registerForm.get('password')?.touched}">
+                          <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                      </app-input>
+
+                      <!-- <app-input [showTip]="false">
+                        <input type="userType" formControlName="userType" class="form-control" placeholder="Tipo de usuário"
+                            [ngClass]="{'is-invalid': registerForm.get('userType')?.invalid && registerForm.get('userType')?.touched}">
+                        <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                    </app-input> -->
+                  </div>
+                  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+                  <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+                  <div style="display: flex; justify-content: center; padding-top: 3%;">
+                      <div class="buttonLogin contorno" style="padding: 0;">
+                          <button (click)="register()" [disabled]="registerForm.invalid" class="btn" style="border: none">Confirmar</button>
+                      </div>
+                  </div>
+  
+                  <div style="display: flex; justify-content: center; padding-top: 3%;">
+                      <a href="login">
+                          <p style="color: black; cursor: pointer;" >Já tenho uma conta</p>
+                      </a>
+                  </div>
+              </form>
+          </div>
+        </div>
+      </div>
+   
+      </div>
+  
+  </div>
+  
+  <!-- <div class="cursor .lg\:absolute"></div> -->
+    
+    
