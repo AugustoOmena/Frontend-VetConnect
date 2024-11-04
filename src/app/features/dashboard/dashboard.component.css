@@ -1,0 +1,16 @@
+.buttonLogin {
+    position: relative;
+    margin: 10px;
+    background-color: white;
+    border-radius: 27px;
+    padding: 10px;
+    text-align: center;
+    justify-content: center;
+    max-width: 205px;
+    cursor: pointer;
+    z-index: 10;
+  }
+  
+  .contorno {
+    border: 2px solid black;
+  }
