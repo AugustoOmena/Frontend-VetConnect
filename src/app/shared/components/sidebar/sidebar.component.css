@@ -1,0 +1,121 @@
+#layoutSidenav {
+    display: flex;
+}
+
+#layoutSidenav_nav {
+    width: 235px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    background-color: #f8f9fa;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    z-index: 1000;
+    margin-top: 56px;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+}
+
+#layoutSidenav_nav.active {
+    transform: translateX(0);
+}
+
+.sb-topnav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+}
+
+.sb-sidenav .nav-link {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: #495057;
+    font-size: 16px;
+    text-decoration: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    width: 100%;
+}
+
+.sb-sidenav .nav-link:hover {
+    background-color: #e9ecef;
+    color: #007bff;
+}
+
+.sb-nav-link-icon {
+    margin-right: 10px;
+}
+
+#layoutSidenav_content {
+    margin-left: 0;
+    width: 100%;
+    padding: 20px;
+    transition: margin-left 0.3s ease, width 0.3s ease;
+}
+
+main {
+    padding: 20px;
+    width: 100%;
+}
+
+#menuToggle {
+    margin-left: 235px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: margin-left 0.3s ease, width 0.3s ease;
+}
+
+#menuToggle.active {
+    margin-left: 0;
+}
+
+/* Estilos do ícone do menu*/
+#menuToggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.hamburger-icon .line {
+    fill: none;
+    stroke: #000;
+    stroke-width: 6;
+    stroke-linecap: round;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+ .hamburger-icon .top {
+    transform-origin: 50% 50%;
+}
+
+ .hamburger-icon .bottom {
+    transform-origin: 50% 50%;
+}
+
+.top {
+    transform: rotate(45deg) translate(10px, 10px);
+
+}
+
+.bottom {
+    transform: rotate(-45deg) translate(10px, -10px);
+}
+
+.middle {
+    opacity: 0;
+}
+
+.active .top {
+    transform: rotate(0deg);
+}
+
+.active .middle {
+    opacity: 1;
+}
+
+.active .bottom {
+    transform: rotate(0deg) ;
+}
