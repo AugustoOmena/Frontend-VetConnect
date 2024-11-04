@@ -1,5 +1,8 @@
-<div class="container" style="margin-top: 6%; max-width: 600px;">
-    <div class="center-column shadow-lg">
+<div class="container" style="margin-top: 4%; max-width: 600px; text-align: center;">
+    <div class="center-column">
+        <h4>🐾 VetConnect</h4>
+    </div>
+    <div class="center-column shadow-lg" style="margin-top: 4%">
       <div class="content">
         <h2 class="title-content-size font-dark">Cadastro</h2>
         <div class="glass-container">
@@ -38,11 +41,6 @@
                           <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
                       </app-input>
 
-                      <!-- <app-input [showTip]="false">
-                        <input type="userType" formControlName="userType" class="form-control" placeholder="Tipo de usuário"
-                            [ngClass]="{'is-invalid': registerForm.get('userType')?.invalid && registerForm.get('userType')?.touched}">
-                        <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
-                    </app-input> -->
                   </div>
                   <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
                   <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
@@ -53,7 +51,7 @@
                   </div>
   
                   <div style="display: flex; justify-content: center; padding-top: 3%;">
-                      <a href="login">
+                      <a routerLink="/login">
                           <p style="color: black; cursor: pointer;" >Já tenho uma conta</p>
                       </a>
                   </div>

@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { InputComponent } from '../../../shared/components/input/input.component';
 import { CommonModule } from '@angular/common';
 import { LoginService } from '../../../core/services/login';
-
 
 @Component({
   selector: 'app-login',
@@ -12,7 +11,8 @@ import { LoginService } from '../../../core/services/login';
   imports: [
     InputComponent,
     ReactiveFormsModule,
-    CommonModule
+    CommonModule,
+    RouterModule
   ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css', '../../../shared/main.css']
