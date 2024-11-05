@@ -16,6 +16,7 @@ import { PagedList } from "../../shared/models/genericPagedList";
 })
 export class ServicesComponent implements OnInit {
   serviceHistory:ServiceHistory[] = [];
+  isLoading: boolean = true;
 
   constructor(
     private UserServices: UserServices) {}
@@ -24,6 +25,7 @@ export class ServicesComponent implements OnInit {
     this.UserServices.fetchServiceHistory()?.subscribe((value: PagedList<ServiceHistory>) => {      
       this.serviceHistory = value.data.itens;
       console.log(this.serviceHistory)
+      this.isLoading = false;
     })
   }
 

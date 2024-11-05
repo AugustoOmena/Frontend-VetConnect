@@ -12,12 +12,10 @@ export class RegistrationService {
 
   constructor(private http: HttpClient) {}
 
-  // Método para verificar se o usuário foi cadastrado
   isRegistered(): boolean {
     return this.responseData !== undefined;
   }
 
-  // Método para cadastrar o usuário
   register(firstName: string, lastName: string, phone: string, email: string, password: string, userType: number): Observable<any> {
     const payload = {
       firstName: firstName,
@@ -29,7 +27,7 @@ export class RegistrationService {
     };
 
     return this.http.post<any>(`${environment.apiUrl}/api/Users/v1/Create`, payload).pipe(
-      tap(user => this.responseData = user) // Armazena a resposta, se necessário
+      tap(user => this.responseData = user)
     );
   }
 }
