@@ -11,9 +11,7 @@
                         <p class="custom-card-text">Todos os serviços para seu pet!</p>
                         <a routerLink="/services">
                             <div style="display: flex; justify-content: center; padding-top: 3%;">
-                                <div class="buttonLogin contorno" style="padding: 0;">
-                                    <button class="btn" style="border: none">Encontrar</button>
-                                </div>
+                                <shared-button [buttonText]="'Encontrar'"></shared-button>
                             </div>
                         </a>
                     </div>
@@ -27,13 +25,11 @@
                         <p class="custom-card-text">Cadastre seu Petshop ou Serviço.</p>
                         
                         <div style="display: flex; justify-content: center; padding-top: 3%;">
-                            <div class="buttonLogin contorno" style="padding: 0;">
-                                <button class="btn" style="border: none">Cadastrar</button>
-                            </div>
+                            <shared-button></shared-button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </div> 
 </dashboardUser-sidebar>

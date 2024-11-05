@@ -1,21 +1,78 @@
 <dashboardUser-sidebar>
     <div class="accordion accordion-flush" id="accordionFlushExample">
-
       <div class="accordion-item" style="margin-bottom: 29px;">
         <h2 class="accordion-header">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" 
+            aria-controls="flush-collapseOne" style="padding-left: 0px;">
             <h2>Serviços</h2>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M3 4h18a1 1 0 0 1 .8 1.6L14 12v6a1 1 0 0 1-.5.87l-4 2A1 1 0 0 1 8 20v-8L2.2 5.6A1 1 0 0 1 3 4Z" fill="currentColor"/>
             </svg>
           </button>
         </h2>
-        <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
-          <div class="accordion-body"> Aqui vou colocar alguns filtros</div>
+        <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">       
+          <div>
+            <form [formGroup]="filterForm">
+              <div class="text-center my-3 ">
+                <div class="row g-3">
+                  <div class="col-12 col-md-6 col-lg-4">
+                    <app-input [showTip]="false">
+                      <p class="infoInputFilter">Nome do serviço</p>
+                      <input
+                        type="text"
+                        formControlName="serviceName"
+                        class="form-control"
+                        placeholder="Nome do serviço"
+                        [ngClass]="{'is-invalid': filterForm.get('serviceName')?.invalid && filterForm.get('serviceName')?.touched}"
+                      />
+                      <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                    </app-input>
+                  </div>
+              
+                  <div class="col-12 col-md-6 col-lg-4">
+                    <app-input [showTip]="false">
+                      <p class="infoInputFilter">Descrição do serviço</p>
+                      <input
+                        type="text"
+                        formControlName="serviceDescription"
+                        class="form-control"
+                        placeholder="Descrição do serviço"
+                        [ngClass]="{'is-invalid': filterForm.get('serviceDescription')?.invalid && filterForm.get('serviceDescription')?.touched}"
+                      />
+                      <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                    </app-input>
+                  </div>
+              
+                  <div class="col-12 col-md-6 col-lg-4">
+                    <app-input [showTip]="false">
+                      <p class="infoInputFilter">Nome do pet</p>
+                      <input
+                        type="text"
+                        formControlName="petName"
+                        class="form-control"
+                        placeholder="Nome do pet"
+                        [ngClass]="{'is-invalid': filterForm.get('petName')?.invalid && filterForm.get('petName')?.touched}"
+                      />
+                      <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                    </app-input>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </div>
 
+    <div class="row row-cols-auto">
+      <div>
+        <shared-button [buttonText]="'Criar novo serviço'"></shared-button>
+      </div>
+      <div>
+        <shared-button [buttonText]="'Pesquisar'" [variant]="'dark'"></shared-button>
+      </div>
+    </div>
+   
     <div class="shadow-lg">
       <table *ngIf="!isLoading" class="table table-hover">
         <thead>

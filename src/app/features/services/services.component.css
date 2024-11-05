@@ -36,3 +36,9 @@
     font-size: 20px;
     z-index: 9999;
   }
+
+.infoInputFilter {
+  margin-bottom: 0;
+  text-align: left;
+  font-weight: 600;
+}

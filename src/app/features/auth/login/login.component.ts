@@ -4,6 +4,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { InputComponent } from '../../../shared/components/input/input.component';
 import { CommonModule } from '@angular/common';
 import { LoginService } from '../../../core/services/login';
+import { ButtonComponent } from "../../../shared/components/button/button.component";
 
 @Component({
   selector: 'app-login',
@@ -12,8 +13,9 @@ import { LoginService } from '../../../core/services/login';
     InputComponent,
     ReactiveFormsModule,
     CommonModule,
-    RouterModule
-  ],
+    RouterModule,
+    ButtonComponent
+],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css', '../../../shared/main.css']
 })
