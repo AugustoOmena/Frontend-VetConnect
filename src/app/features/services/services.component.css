@@ -1,0 +1,23 @@
+.shadow-lg {
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
+    border-radius: 15px;
+    padding: 10px;
+  }
+  
+  .accordion-button:not(.collapsed) {
+    background-color: transparent !important;
+    color: inherit !important;
+    box-shadow: none !important;
+  }
+  
+  .accordion-button:focus {
+    box-shadow: none !important;
+  }
+
+  .accordion-button::after {
+    display: none;
+  }
+  
+  .accordion-button:not(.collapsed)::after {
+    transform: rotate(180deg);
+  }
