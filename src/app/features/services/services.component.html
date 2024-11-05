@@ -20,10 +20,10 @@
                       <p class="infoInputFilter">Nome do serviço</p>
                       <input
                         type="text"
-                        formControlName="serviceName"
+                        formControlName="name"
                         class="form-control"
                         placeholder="Nome do serviço"
-                        [ngClass]="{'is-invalid': filterForm.get('serviceName')?.invalid && filterForm.get('serviceName')?.touched}"
+                        [ngClass]="{'is-invalid': filterForm.get('name')?.invalid && filterForm.get('name')?.touched}"
                       />
                       <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
                     </app-input>
@@ -34,10 +34,10 @@
                       <p class="infoInputFilter">Descrição do serviço</p>
                       <input
                         type="text"
-                        formControlName="serviceDescription"
+                        formControlName="description"
                         class="form-control"
                         placeholder="Descrição do serviço"
-                        [ngClass]="{'is-invalid': filterForm.get('serviceDescription')?.invalid && filterForm.get('serviceDescription')?.touched}"
+                        [ngClass]="{'is-invalid': filterForm.get('description')?.invalid && filterForm.get('description')?.touched}"
                       />
                       <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
                     </app-input>
@@ -45,13 +45,13 @@
               
                   <div class="col-12 col-md-6 col-lg-4">
                     <app-input [showTip]="false">
-                      <p class="infoInputFilter">Nome do pet</p>
+                      <p class="infoInputFilter">Dono do Pet</p>
                       <input
                         type="text"
-                        formControlName="petName"
+                        formControlName="petOwnerName"
                         class="form-control"
-                        placeholder="Nome do pet"
-                        [ngClass]="{'is-invalid': filterForm.get('petName')?.invalid && filterForm.get('petName')?.touched}"
+                        placeholder="Nome do dono do pet"
+                        [ngClass]="{'is-invalid': filterForm.get('petOwnerName')?.invalid && filterForm.get('petOwnerName')?.touched}"
                       />
                       <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
                     </app-input>
@@ -66,10 +66,10 @@
 
     <div class="row row-cols-auto">
       <div>
-        <shared-button [buttonText]="'Criar novo serviço'"></shared-button>
+        <shared-button data-bs-toggle="modal" data-bs-target="#exampleModal" [buttonText]="'Criar novo serviço'"></shared-button>
       </div>
       <div>
-        <shared-button [buttonText]="'Pesquisar'" [variant]="'dark'"></shared-button>
+        <shared-button (click)="applyFilters()" [buttonText]="'Pesquisar'" [variant]="'dark'"></shared-button>
       </div>
     </div>
    
@@ -96,6 +96,71 @@
 
     <div *ngIf="isLoading" class="loading-overlay">
       <img src="https://media.giphy.com/media/YpknJ2vycwB1NcLAnz/giphy.gif" alt="">
+    </div>
+
+    
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Novo serviço</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form [formGroup]="filterForm">
+              <div class="text-center my-3 ">
+                <div class="row g-3">
+                  <div class="col-12 col-md-6 col-lg-4">
+                    <app-input [showTip]="false">
+                      <p class="infoInputFilter">Nome</p>
+                      <input
+                        type="text"
+                        formControlName="name"
+                        class="form-control"
+                        placeholder="Nome do serviço"
+                        [ngClass]="{'is-invalid': filterForm.get('name')?.invalid && filterForm.get('name')?.touched}"
+                      />
+                      <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                    </app-input>
+                  </div>
+              
+                  <div class="col-12 col-md-6 col-lg-4">
+                    <app-input [showTip]="false">
+                      <p class="infoInputFilter">Descrição</p>
+                      <input
+                        type="text"
+                        formControlName="description"
+                        class="form-control"
+                        placeholder="Descrição do serviço"
+                        [ngClass]="{'is-invalid': filterForm.get('description')?.invalid && filterForm.get('description')?.touched}"
+                      />
+                      <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                    </app-input>
+                  </div>
+              
+                  <div class="col-12 col-md-6 col-lg-4">
+                    <app-input [showTip]="false">
+                      <p class="infoInputFilter">Preço</p>
+                      <input
+                        type="number"
+                        formControlName="petOwnerName"
+                        class="form-control"
+                        [ngClass]="{'is-invalid': filterForm.get('petOwnerName')?.invalid && filterForm.get('petOwnerName')?.touched}"
+                      />
+                      <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                    </app-input>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <shared-button [buttonText]="'Cancelar'"></shared-button>
+            <shared-button [buttonText]="'Salvar'" [variant]="'dark'"></shared-button>
+          </div>
+        </div>
+      </div>
     </div>
 </dashboardUser-sidebar>
 

@@ -7,6 +7,7 @@ import { PagedList } from "../../shared/models/genericPagedList";
 import { InputComponent } from '../../shared/components/input/input.component';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonComponent } from '../../shared/components/button/button.component';
+import { ServiceHistoryFilter } from '../../shared/models/serviceHistoryFilter';
 
 @Component({
   selector: 'app-services',
@@ -31,19 +32,24 @@ export class ServicesComponent implements OnInit {
   constructor(
     private fb: FormBuilder, private UserServices: UserServices) {}
 
-  ngOnInit(): void {
-    this.filterForm = this.fb.group({
-      serviceName: this.fb.control('', [Validators.required ]),
-      serviceDescription: this.fb.control('', [Validators.required]),
-      petName: this.fb.control('', [Validators.required]),
-
-    });
-
-    this.UserServices.fetchServiceHistory()?.subscribe((value: PagedList<ServiceHistory>) => {      
-      this.serviceHistory = value.data.itens;
-      console.log(this.serviceHistory)
-      this.isLoading = false;
-    })
+    ngOnInit(): void {
+      this.filterForm = this.fb.group({
+        name: this.fb.control(''),
+        description: this.fb.control(''),
+        petOwnerName: this.fb.control(''),
+      });
+  
+      this.applyFilters();
+  }
+  
+  applyFilters(): void {
+      const filters: ServiceHistoryFilter = this.filterForm.value;
+  
+      this.UserServices.fetchServiceHistory(filters).subscribe((value: PagedList<ServiceHistory>) => {
+          this.serviceHistory = value.data.itens;
+          console.log(this.serviceHistory);
+          this.isLoading = false;
+      });
   }
 
 }
