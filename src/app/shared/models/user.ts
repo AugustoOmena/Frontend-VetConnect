@@ -3,12 +3,11 @@ import { Pet } from "./pet";
 
 export interface User {
     id: string;
+    email?: string,
     firstName: string,
     lastName: string,
-    password: string,
-    userType: EUserType,
-    email?: string,
     phone?: string,
+    userType: EUserType,
     pets?: Pet[]
-    accessToken: string;
+    accessToken?: string;
 }

@@ -5,6 +5,7 @@ import { InputComponent } from '../../../shared/components/input/input.component
 import { CommonModule } from '@angular/common';
 import { LoginService } from '../../../core/services/login';
 import { ButtonComponent } from "../../../shared/components/button/button.component";
+import { LoadComponent } from "../../../shared/components/load/load.component";
 
 @Component({
   selector: 'app-login',
@@ -14,7 +15,9 @@ import { ButtonComponent } from "../../../shared/components/button/button.compon
     ReactiveFormsModule,
     CommonModule,
     RouterModule,
-    ButtonComponent
+    ButtonComponent,
+    LoginComponent,
+    LoadComponent
 ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css', '../../../shared/main.css']
@@ -24,6 +27,7 @@ export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
   errorMessage: string = '';
   successMessage: string = '';
+  isLoading: boolean = false;
 
   constructor(private fb: FormBuilder, private loginService: LoginService, private route: ActivatedRoute, private router: Router) {}
 
@@ -40,6 +44,7 @@ export class LoginComponent implements OnInit {
   }
 
   login(){
+    this.isLoading = true;
     this.errorMessage = '';
     this.successMessage = '';
     this.loginService.login(this.loginForm.value.email, this.loginForm.value.password)
@@ -49,10 +54,12 @@ export class LoginComponent implements OnInit {
           console.log(data.data.accessToken)
           localStorage.setItem('accessToken', data.data.accessToken);
           this.router.navigate(['home']);
+          this.isLoading = false;
         },
         error => {
           this.errorMessage = error.error;
           localStorage.removeItem('accessToken');
+          this.isLoading = false;
         }
       );
   }

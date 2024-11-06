@@ -9,7 +9,7 @@ import { ServiceHistoryFilter } from "../../shared/models/serviceHistoryFilter";
 @Injectable({
     providedIn: 'root'
   })
-export class UserServices {
+export class UserServiceHistory {
     filtro: string = '';
 
     constructor(private http:HttpClient){}
