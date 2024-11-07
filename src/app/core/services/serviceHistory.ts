@@ -1,16 +1,19 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs/internal/Observable";
-import { ServiceHistory } from "../../shared/models/serviceHistory";
+import { ServiceHistory, ServiceHistoryParams } from "../../shared/models/serviceHistory";
 import { environment } from "../../../environments/environments";
 import { PagedList } from "../../shared/models/genericPagedList";
 import { ServiceHistoryFilter } from "../../shared/models/serviceHistoryFilter";
+import { BaseResponse } from "../../shared/models/baseResponse";
+import { tap } from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root'
   })
 export class UserServiceHistory {
     filtro: string = '';
+    responseData!: BaseResponse;
 
     constructor(private http:HttpClient){}
 
@@ -34,4 +37,15 @@ export class UserServiceHistory {
         return this.http.get<PagedList<ServiceHistory>>(`${environment.apiUrl}/v1/Backoffice/ListAll/Services${this.filtro}`, { headers });
     }
 
+    createServiceHistory(params: ServiceHistoryParams): Observable<BaseResponse> {
+        const token = localStorage.getItem('accessToken');
+
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+
+        return this.http.post<BaseResponse>(`${environment.apiUrl}/v1/Backoffice/Create/ServiceByPetId/${params.petId}`, params, { headers }).pipe(
+            tap(serviceHistory => this.responseData = serviceHistory)
+          );
+    }
 }

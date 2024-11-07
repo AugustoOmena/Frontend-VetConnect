@@ -85,7 +85,7 @@
         </thead>
         <tbody>
           <tr *ngFor="let service of serviceHistory">
-            <td>{{ service.pet.name }}</td>
+            <td>{{ service.pet?.name }}</td>
             <td>{{ service.name }}</td>
             <td>{{ service.description }}</td>
             <td>{{ service.price | currency:'BRL':'symbol':'1.2-2' }}</td>
@@ -172,10 +172,11 @@
           </div>
           <div class="modal-footer">
             <shared-button data-bs-dismiss="modal" [buttonText]="'Cancelar'"></shared-button>
-            <shared-button [buttonText]="'Salvar'" [variant]="'dark'"></shared-button>
+            <shared-button (click)="createNewService()" [buttonText]="'Salvar'" [variant]="'dark'"></shared-button>
           </div>
         </div>
       </div>
     </div>
+    
 </dashboardUser-sidebar>
 

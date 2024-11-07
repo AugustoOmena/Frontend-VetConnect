@@ -1,10 +1,17 @@
 import { Pet } from "./pet";
 
 export interface ServiceHistory {
-    id: string;
+    id?: string;
     name: string;
     description: string;
     price: number;
     petId: string;
-    pet: Pet;
+    pet?: Pet;
+}
+
+export interface ServiceHistoryParams {
+    name: string;
+    description: string;
+    price: number;
+    petId: string;
 }

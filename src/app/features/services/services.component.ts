@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { SidebarComponent } from '../../shared/components/sidebar/sidebar.component';
 import { UserServiceHistory } from '../../core/services/serviceHistory';
-import { ServiceHistory } from '../../shared/models/serviceHistory';
+import { ServiceHistory, ServiceHistoryParams } from '../../shared/models/serviceHistory';
 import { CommonModule } from '@angular/common';
 import { PagedList } from "../../shared/models/genericPagedList";
 import { InputComponent } from '../../shared/components/input/input.component';
@@ -45,11 +45,11 @@ export class ServicesComponent implements OnInit {
 
     ngOnInit(): void {
       this.createPetForm = this.fb.group({
-        selectedUser: [''],
-        selectedPetUser: [''],
-        name: this.fb.control(''),
-        description: this.fb.control(''),
-        price: this.fb.control(0),
+        selectedUser: ['', Validators.required],
+        selectedPetUser: ['', Validators.required],
+        name: this.fb.control('', Validators.required),
+        description: this.fb.control('', Validators.required),
+        price: this.fb.control(0, Validators.required),
       });
       
       this.filterForm = this.fb.group({
@@ -108,6 +108,28 @@ export class ServicesComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  createNewService(): void {
+    this.isLoading = true;
+    
+    const serviceParams: ServiceHistoryParams = {
+    name: this.createPetForm.get('name')?.value,
+    description: this.createPetForm.get('description')?.value,
+    price: this.createPetForm.get('price')?.value,
+    petId: this.createPetForm.get('selectedPetUser')?.value,
+  };
+
+  this.userServiceHistory.createServiceHistory(serviceParams).subscribe({
+    next: (response) => {
+      if (response.success){}
+      this.isLoading = false;
+    },
+    error: (error) => {
+      console.error("Erro ao criar serviço:", error);
+      this.isLoading = false;
+    }
+  });
   }
 
 }
