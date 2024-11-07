@@ -66,7 +66,7 @@
 
     <div class="row row-cols-auto">
       <div>
-        <shared-button (click)="createModal()" data-bs-toggle="modal" data-bs-target="#exampleModal" [buttonText]="'Criar novo serviço'"></shared-button>
+        <shared-button (click)="createNewServiceModalOpen()" data-bs-toggle="modal" data-bs-target="#exampleModal" [buttonText]="'Criar novo serviço'"></shared-button>
       </div>
       <div>
         <shared-button (click)="applyFilters()" [buttonText]="'Pesquisar'" [variant]="'dark'"></shared-button>
@@ -161,8 +161,8 @@
                 <div class="col">
                   
                   <p class="infoInputFilter">Nome do pet</p>
-                  <select id="userSelect" formControlName="selectedUser" class="form-select">
-                    <option *ngFor="let user of users" [value]="user.id">{{ user.firstName }} {{ user.lastName }}</option>
+                  <select id="petSelect" formControlName="selectedPetUser" class="form-select">
+                    <option *ngFor="let pet of pets" [value]="pet.id">{{ pet.name }}</option>
                   </select>
 
                 </div>

@@ -11,6 +11,8 @@ import { ServiceHistoryFilter } from '../../shared/models/serviceHistoryFilter';
 import { LoadComponent } from "../../shared/components/load/load.component";
 import { User } from '../../shared/models/user';
 import { UserServices } from '../../core/services/user';
+import { Pet } from '../../shared/models/pet';
+import { PetService } from '../../core/services/Pet';
 
 @Component({
   selector: 'app-services',
@@ -30,17 +32,21 @@ export class ServicesComponent implements OnInit {
   serviceHistory:ServiceHistory[] = [];
   isLoading: boolean = true;
   users: User[] = [];
+  pets: Pet[] = [];
 
   filterForm!: FormGroup;
   createPetForm!: FormGroup;
 
   constructor(
     private fb: FormBuilder, private userServiceHistory: UserServiceHistory, 
-    private userService: UserServices) {}
+    private userService: UserServices,
+    private petService: PetService
+  ) {}
 
     ngOnInit(): void {
       this.createPetForm = this.fb.group({
         selectedUser: [''],
+        selectedPetUser: [''],
         name: this.fb.control(''),
         description: this.fb.control(''),
         price: this.fb.control(0),
@@ -50,6 +56,12 @@ export class ServicesComponent implements OnInit {
         name: this.fb.control(''),
         description: this.fb.control(''),
         petOwnerName: this.fb.control(''),
+      });
+
+      this.createPetForm.get('selectedUser')?.valueChanges.subscribe((userId) => {
+        if (userId) {
+          this.loadPetsByUserId(userId);
+        }
       });
   
       this.applyFilters();
@@ -65,7 +77,24 @@ export class ServicesComponent implements OnInit {
       });
   }
 
-  createModal(): void {
+  loadPetsByUserId(userId: string): void {
+    this.isLoading = true;
+    console.log("log here")
+    this.petService.fetchPetsByUserId(userId).subscribe({
+      next: (response: PagedList<Pet>) => {
+        this.pets = response.data.itens;
+        console.log(this.pets);
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error("Erro ao carregar pets:", error);
+        this.isLoading = false;
+      }
+    });
+  }
+
+
+  createNewServiceModalOpen(): void {
     this.isLoading = true;
 
     this.userService.fetchUsers().subscribe({
