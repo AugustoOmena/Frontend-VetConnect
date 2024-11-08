@@ -13,6 +13,9 @@ import { User } from '../../shared/models/user';
 import { UserServices } from '../../core/services/user';
 import { Pet } from '../../shared/models/pet';
 import { PetService } from '../../core/services/Pet';
+import { ToastComponent } from "../../shared/components/toast/toast.component";
+
+declare var bootstrap: any;
 
 @Component({
   selector: 'app-services',
@@ -23,7 +26,8 @@ import { PetService } from '../../core/services/Pet';
     CommonModule,
     InputComponent,
     ButtonComponent,
-    LoadComponent
+    LoadComponent,
+    ToastComponent
 ],
   templateUrl: './services.component.html',
   styleUrl: './services.component.css'
@@ -31,6 +35,7 @@ import { PetService } from '../../core/services/Pet';
 export class ServicesComponent implements OnInit {
   serviceHistory:ServiceHistory[] = [];
   isLoading: boolean = true;
+  isSuccess: boolean = false;
   users: User[] = [];
   pets: Pet[] = [];
 
@@ -124,6 +129,13 @@ export class ServicesComponent implements OnInit {
     next: (response) => {
       if (response.success){}
       this.isLoading = false;
+      this.isSuccess = true;
+      setTimeout(() => {
+        this.isSuccess = false;
+      }, 1200);  
+      const myModalEl = document.getElementById('exampleModal');
+          const modal = bootstrap.Modal.getInstance(myModalEl);
+          modal.hide(); 
     },
     error: (error) => {
       console.error("Erro ao criar serviço:", error);

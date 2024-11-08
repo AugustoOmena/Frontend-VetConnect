@@ -77,24 +77,36 @@
       <table *ngIf="!isLoading" class="table table-hover">
         <thead>
           <tr>
-            <th scope="col">Nome do Pet</th>
+            <th scope="col"></th>
+            <th scope="col" class="d-none d-sm-table-cell">Nome do Pet</th>
             <th scope="col">Serviço</th>
-            <th scope="col">Descrição</th>
-            <th scope="col">Preço</th>
+            <th scope="col" class="d-none d-sm-table-cell">Descrição</th>
+            <th scope="col" class="d-none d-sm-table-cell">Preço</th>
+
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let service of serviceHistory">
-            <td>{{ service.pet?.name }}</td>
+            <td [width]="120"><div class="dropdown">
+              <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                ⛭
+              </button>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#">Deletar</a></li>
+                <li><a class="dropdown-item" href="#">Editar</a></li>
+              </ul>
+            </div></td>
+            <td class="d-none d-sm-table-cell">{{ service.pet?.name }}</td>
             <td>{{ service.name }}</td>
-            <td>{{ service.description }}</td>
-            <td>{{ service.price | currency:'BRL':'symbol':'1.2-2' }}</td>
+            <td class="d-none d-sm-table-cell">{{ service.description }}</td>
+            <td class="d-none d-sm-table-cell">{{ service.price | currency:'BRL':'symbol':'1.2-2' }}</td>
           </tr>
         </tbody>
       </table>
     </div>
 
     <shared-load *ngIf="isLoading"></shared-load>
+    <shared-toast *ngIf="isSuccess"></shared-toast>
 
     
     <!-- Modal -->
