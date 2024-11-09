@@ -36,6 +36,7 @@ export class ServicesComponent implements OnInit {
   serviceHistory:ServiceHistory[] = [];
   isLoading: boolean = true;
   isSuccess: boolean = false;
+  isCreatingModal: boolean = false;
   users: User[] = [];
   pets: Pet[] = [];
 
@@ -71,6 +72,11 @@ export class ServicesComponent implements OnInit {
   
       this.applyFilters();
   }
+
+  cleanCreatePetForm(){
+    this.createPetForm.reset();
+    this.createPetForm.get('price')?.setValue(0);
+  }
   
   applyFilters(): void {
       const filters: ServiceHistoryFilter = this.filterForm.value;
@@ -100,17 +106,41 @@ export class ServicesComponent implements OnInit {
 
 
   createNewServiceModalOpen(): void {
+    this.isCreatingModal = true;
     this.isLoading = true;
+    this.cleanCreatePetForm()
+
+    this.userService.fetchUsers().subscribe({
+      next: (response: PagedList<User>) => {
+        this.users = response.data.itens;
+        console.log(this.users)
+        this.isCreatingModal = false;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error("Erro ao carregar usuários:", error);
+        this.isLoading = false;
+        this.isCreatingModal = false;
+      }
+    });
+  }
+
+  editServiceModalOpen(): void {
+    this.isCreatingModal = true;
+    this.isLoading = true;
+    this.cleanCreatePetForm()
 
     this.userService.fetchUsers().subscribe({
       next: (response: PagedList<User>) => {
         this.users = response.data.itens;
         console.log(this.users)
         this.isLoading = false;
+        this.isCreatingModal = false;
       },
       error: (error) => {
         console.error("Erro ao carregar usuários:", error);
         this.isLoading = false;
+        this.isCreatingModal = false;
       }
     });
   }
@@ -127,8 +157,7 @@ export class ServicesComponent implements OnInit {
 
   this.userServiceHistory.createServiceHistory(serviceParams).subscribe({
     next: (response) => {
-      if (response.success){}
-      this.isLoading = false;
+      this.applyFilters();
       this.isSuccess = true;
       setTimeout(() => {
         this.isSuccess = false;

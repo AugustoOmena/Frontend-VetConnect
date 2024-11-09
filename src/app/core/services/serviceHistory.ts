@@ -48,4 +48,16 @@ export class UserServiceHistory {
             tap(serviceHistory => this.responseData = serviceHistory)
           );
     }
+
+    editServiceHistory(params: ServiceHistoryParams): Observable<BaseResponse> {
+        const token = localStorage.getItem('accessToken');
+
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+
+        return this.http.post<BaseResponse>(`${environment.apiUrl}/v1/Backoffice/Create/ServiceByPetId/${params.petId}`, params, { headers }).pipe(
+            tap(serviceHistory => this.responseData = serviceHistory)
+          );
+    }
 }
