@@ -87,15 +87,18 @@
         </thead>
         <tbody>
           <tr *ngFor="let service of serviceHistory">
-            <td [width]="120"><div class="dropdown">
-              <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                ⛭
-              </button>
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#">Deletar</a></li>
-                <li><a class="dropdown-item" href="#">Editar</a></li>
-              </ul>
-            </div></td>
+            <td [width]="120">
+              <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle btn-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="fas fa-cog"></i>
+                </button>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="#"><i class="fa-solid fa-circle-info"></i> Detalhes</a></li>
+                  <li><a class="dropdown-item" href="#"><i class="fa-solid fa-pencil"></i> Editar</a></li>
+                  <li><a class="dropdown-item" href="#"><i class="fa-solid fa-trash"></i> Excluir</a></li>
+                </ul>
+              </div>
+            </td>
             <td class="d-none d-sm-table-cell">{{ service.pet?.name }}</td>
             <td>{{ service.name }}</td>
             <td class="d-none d-sm-table-cell">{{ service.description }}</td>

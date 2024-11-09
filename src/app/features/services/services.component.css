@@ -27,3 +27,11 @@
   text-align: left;
   font-weight: 600;
 }
+
+.dropdown-item:hover i {
+  color: #007bff;
+}
+
+.dropdown-toggle:hover i {
+  color: #fd63fa;
+}
