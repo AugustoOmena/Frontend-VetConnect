@@ -17,6 +17,5 @@ export class SidebarComponent {
 
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
-    console.log('Menu toggle state:', this.isMenuOpen);
   }
 }

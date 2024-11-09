@@ -20,7 +20,7 @@ export class UserServiceHistory {
     fetchServiceHistory(filter?: ServiceHistoryFilter): Observable<PagedList<ServiceHistory>> {
         this.filtro = '';
 
-        if (filter) {
+        if (filter?.name || filter?.description || filter?.petOwnerName) {
             const filterParams = new URLSearchParams();
             if (filter.name) filterParams.append('name', filter.name);
             if (filter.description) filterParams.append('description', filter.description);
@@ -56,7 +56,7 @@ export class UserServiceHistory {
             'Authorization': `Bearer ${token}`
         });
 
-        return this.http.post<BaseResponse>(`${environment.apiUrl}/v1/Backoffice/Create/ServiceByPetId/${params.petId}`, params, { headers }).pipe(
+        return this.http.patch<BaseResponse>(`${environment.apiUrl}/v1/Backoffice/Edit/Service/${params.serviceId}`, params, { headers }).pipe(
             tap(serviceHistory => this.responseData = serviceHistory)
           );
     }

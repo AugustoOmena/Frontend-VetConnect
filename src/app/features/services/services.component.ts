@@ -14,6 +14,7 @@ import { UserServices } from '../../core/services/user';
 import { Pet } from '../../shared/models/pet';
 import { PetService } from '../../core/services/Pet';
 import { ToastComponent } from "../../shared/components/toast/toast.component";
+import { ModalMode } from '../../shared/Enums/modalmode';
 
 declare var bootstrap: any;
 
@@ -33,15 +34,21 @@ declare var bootstrap: any;
   styleUrl: './services.component.css'
 })
 export class ServicesComponent implements OnInit {
+  selectedService: ServiceHistory | undefined;
   serviceHistory:ServiceHistory[] = [];
   isLoading: boolean = true;
   isSuccess: boolean = false;
-  isCreatingModal: boolean = false;
+  textModal: ModalMode = ModalMode.NovoServico;
   users: User[] = [];
   pets: Pet[] = [];
 
   filterForm!: FormGroup;
   createPetForm!: FormGroup;
+
+  editUserName: string | undefined;
+  editUserPet: Pet | undefined;
+
+  ModalMode = ModalMode;
 
   constructor(
     private fb: FormBuilder, private userServiceHistory: UserServiceHistory, 
@@ -65,7 +72,7 @@ export class ServicesComponent implements OnInit {
       });
 
       this.createPetForm.get('selectedUser')?.valueChanges.subscribe((userId) => {
-        if (userId) {
+        if (userId && this.textModal === ModalMode.NovoServico) {
           this.loadPetsByUserId(userId);
         }
       });
@@ -90,11 +97,9 @@ export class ServicesComponent implements OnInit {
 
   loadPetsByUserId(userId: string): void {
     this.isLoading = true;
-    console.log("log here")
     this.petService.fetchPetsByUserId(userId).subscribe({
       next: (response: PagedList<Pet>) => {
         this.pets = response.data.itens;
-        console.log(this.pets);
         this.isLoading = false;
       },
       error: (error) => {
@@ -106,41 +111,44 @@ export class ServicesComponent implements OnInit {
 
 
   createNewServiceModalOpen(): void {
-    this.isCreatingModal = true;
+    this.textModal = ModalMode.NovoServico
     this.isLoading = true;
     this.cleanCreatePetForm()
 
-    this.userService.fetchUsers().subscribe({
-      next: (response: PagedList<User>) => {
-        this.users = response.data.itens;
-        console.log(this.users)
-        this.isCreatingModal = false;
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error("Erro ao carregar usuários:", error);
-        this.isLoading = false;
-        this.isCreatingModal = false;
-      }
-    });
+    this.fetchUsers();
   }
 
-  editServiceModalOpen(): void {
-    this.isCreatingModal = true;
+  editServiceModalOpen(service : ServiceHistory): void {
     this.isLoading = true;
-    this.cleanCreatePetForm()
 
+    console.log(service)
+
+    this.textModal = ModalMode.EditandoServico
+
+    this.editUserName = service.pet?.userName;
+    this.editUserPet = service.pet;
+    this.selectedService = service;
+
+    this.createPetForm.reset({
+      selectedUser: [this.editUserName],
+      selectedPetUser: [this.editUserPet],
+      name: service.name,
+      description: service.description,
+      price: service.price
+    });
+
+    this.isLoading = false;
+  }
+
+  fetchUsers(): void {
     this.userService.fetchUsers().subscribe({
       next: (response: PagedList<User>) => {
         this.users = response.data.itens;
-        console.log(this.users)
         this.isLoading = false;
-        this.isCreatingModal = false;
       },
       error: (error) => {
         console.error("Erro ao carregar usuários:", error);
         this.isLoading = false;
-        this.isCreatingModal = false;
       }
     });
   }
@@ -162,12 +170,41 @@ export class ServicesComponent implements OnInit {
       setTimeout(() => {
         this.isSuccess = false;
       }, 1200);  
-      const myModalEl = document.getElementById('exampleModal');
+      const myModalEl = document.getElementById('createEditDeleteModal');
           const modal = bootstrap.Modal.getInstance(myModalEl);
           modal.hide(); 
     },
     error: (error) => {
       console.error("Erro ao criar serviço:", error);
+      this.isLoading = false;
+    }
+  });
+  }
+
+  editSelectedService(): void {
+    this.isLoading = true;
+    
+    const serviceParams: ServiceHistoryParams = {
+    name: this.createPetForm.get('name')?.value,
+    description: this.createPetForm.get('description')?.value,
+    price: this.createPetForm.get('price')?.value,
+    petId: this.editUserPet?.id || '',
+    serviceId: this.selectedService?.id
+  };
+
+  this.userServiceHistory.editServiceHistory(serviceParams).subscribe({
+    next: (response) => {
+      this.applyFilters();
+      this.isSuccess = true;
+      setTimeout(() => {
+        this.isSuccess = false;
+      }, 1200);  
+      const myModalEl = document.getElementById('createEditDeleteModal');
+          const modal = bootstrap.Modal.getInstance(myModalEl);
+          modal.hide(); 
+    },
+    error: (error) => {
+      console.error("Erro ao editar serviço:", error);
       this.isLoading = false;
     }
   });

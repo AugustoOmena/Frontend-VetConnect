@@ -7,6 +7,7 @@ export interface Pet {
     race: string;
     birthDate: string;
     userId: string;
+    userName: string;
     user?: User;
     createdAt: string | null; 
     deleted: string | null;

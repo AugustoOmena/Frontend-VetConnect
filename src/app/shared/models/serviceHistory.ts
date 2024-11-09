@@ -10,6 +10,7 @@ export interface ServiceHistory {
 }
 
 export interface ServiceHistoryParams {
+    serviceId?: string,
     name: string;
     description: string;
     price: number;
