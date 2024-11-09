@@ -60,4 +60,16 @@ export class UserServiceHistory {
             tap(serviceHistory => this.responseData = serviceHistory)
           );
     }
+
+    deleteServiceHistory(id: String): Observable<BaseResponse> {
+        const token = localStorage.getItem('accessToken');
+
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+
+        return this.http.delete<BaseResponse>(`${environment.apiUrl}/v1/Backoffice/Delete/Service/${id}`, { headers }).pipe(
+            tap(serviceHistory => this.responseData = serviceHistory)
+          );
+    }
 }

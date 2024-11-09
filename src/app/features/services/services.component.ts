@@ -49,6 +49,7 @@ export class ServicesComponent implements OnInit {
   editUserPet: Pet | undefined;
 
   ModalMode = ModalMode;
+  selectedServiceToDelete!: ServiceHistory;
 
   constructor(
     private fb: FormBuilder, private userServiceHistory: UserServiceHistory, 
@@ -78,7 +79,7 @@ export class ServicesComponent implements OnInit {
       });
   
       this.applyFilters();
-  }
+    }
 
   cleanCreatePetForm(){
     this.createPetForm.reset();
@@ -138,6 +139,16 @@ export class ServicesComponent implements OnInit {
     });
 
     this.isLoading = false;
+  }
+
+  deleteServiceModalOpen(serviceHistory: ServiceHistory): void {
+    this.isLoading = true;
+    this.textModal = ModalMode.DeleteServico
+    this.cleanCreatePetForm()
+
+    this.selectedServiceToDelete = serviceHistory;
+
+    this.fetchUsers();
   }
 
   fetchUsers(): void {
@@ -208,6 +219,33 @@ export class ServicesComponent implements OnInit {
       this.isLoading = false;
     }
   });
+  }
+
+  deleteService(): void {
+    this.isLoading = true;
+    this.textModal = ModalMode.DeleteServico
+    this.cleanCreatePetForm()
+
+    const id = this.selectedServiceToDelete?.id
+
+    this.userServiceHistory.deleteServiceHistory(id).subscribe({
+      next: (response) => {
+        this.applyFilters();
+        this.isSuccess = true;
+        setTimeout(() => {
+          this.isSuccess = false;
+        }, 1200);  
+        const myModalEl = document.getElementById('createEditDeleteModal');
+            const modal = bootstrap.Modal.getInstance(myModalEl);
+            modal.hide(); 
+      },
+      error: (error) => {
+        console.error("Erro ao editar serviço:", error);
+        this.isLoading = false;
+      }
+    });
+
+    this.fetchUsers();
   }
 
 }

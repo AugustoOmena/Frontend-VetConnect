@@ -95,7 +95,7 @@
                 <ul class="dropdown-menu">
                   <li><a class="dropdown-item" href="#"><i class="fa-solid fa-circle-info"></i> Detalhes</a></li>
                   <li><a class="dropdown-item" (click)="editServiceModalOpen(service)" data-bs-toggle="modal" data-bs-target="#createEditDeleteModal"><i class="fa-solid fa-pencil"></i> Editar</a></li>
-                  <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#createEditDeleteModal"><i class="fa-solid fa-trash"></i> Excluir</a></li>
+                  <li><a class="dropdown-item" (click)="deleteServiceModalOpen(service)" data-bs-toggle="modal" data-bs-target="#createEditDeleteModal"><i class="fa-solid fa-trash"></i> Excluir</a></li>
                 </ul>
               </div>
             </td>
@@ -193,11 +193,15 @@
               
             </form>
           </div>
+          <div class="modal-body" *ngIf="textModal === ModalMode.DeleteServico">
+            <h3>Tem certeza que deseja deletar o serviço "{{ selectedServiceToDelete?.name }}"?</h3>
+            <p>Essa ação é irreversível.</p>
+          </div>
           <div class="modal-footer">
             <shared-button data-bs-dismiss="modal" [buttonText]="'Cancelar'"></shared-button>
               <shared-button *ngIf="textModal === ModalMode.NovoServico" (click)="createNewService()" [buttonText]="'Salvar'" [variant]="'dark'"></shared-button>
               <shared-button *ngIf="textModal === ModalMode.EditandoServico" (click)="editSelectedService()" [buttonText]="'Editar'" [variant]="'dark'"></shared-button>
-              <shared-button *ngIf="textModal === ModalMode.DeleteServico" [buttonText]="'Editar'" [variant]="'dark'"></shared-button>
+              <shared-button *ngIf="textModal === ModalMode.DeleteServico" (click)="deleteService()" [buttonText]="'Excluir'" [variant]="'dark'"></shared-button>
             </div>
         </div>
       </div>

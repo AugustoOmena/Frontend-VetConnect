@@ -301,3 +301,7 @@
   .font-dark {
     color: rgba(0, 0, 0, 0.797);
   }
+
+  .form-control {
+    margin-bottom: 10px;
+  }
