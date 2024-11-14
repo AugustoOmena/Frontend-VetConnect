@@ -1,3 +1,4 @@
+import { EPetType } from "../Enums/epettype";
 import { User } from "./user";
 
 export interface Pet {
@@ -11,4 +12,12 @@ export interface Pet {
     user?: User;
     createdAt: string | null; 
     deleted: string | null;
+}
+
+  export interface PetParams {
+    petId?: string,
+    name: string;
+    petType: number | EPetType;
+    race: string;
+    birthDate: string;
 }

@@ -4,7 +4,7 @@
         <h2 class="accordion-header">
           <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" 
             aria-controls="flush-collapseOne" style="padding-left: 0px;">
-            <h2>Serviços</h2>
+            <h2>Pets</h2>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M3 4h18a1 1 0 0 1 .8 1.6L14 12v6a1 1 0 0 1-.5.87l-4 2A1 1 0 0 1 8 20v-8L2.2 5.6A1 1 0 0 1 3 4Z" fill="currentColor"/>
             </svg>
@@ -17,12 +17,12 @@
                 <div class="row g-3">
                   <div class="col-12 col-md-6 col-lg-4">
                     <app-input [showTip]="false">
-                      <p class="infoInputFilter">Nome do serviço</p>
+                      <p class="infoInputFilter">Nome do pet</p>
                       <input
                         type="text"
                         formControlName="name"
                         class="form-control"
-                        placeholder="Nome do serviço"
+                        placeholder="Nome do pet"
                         [ngClass]="{'is-invalid': filterForm.get('name')?.invalid && filterForm.get('name')?.touched}"
                       />
                       <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
@@ -31,31 +31,32 @@
               
                   <div class="col-12 col-md-6 col-lg-4">
                     <app-input [showTip]="false">
-                      <p class="infoInputFilter">Descrição do serviço</p>
+                      <p class="infoInputFilter">Idade a partir de</p>
                       <input
-                        type="text"
-                        formControlName="description"
+                        type="date"
+                        formControlName="startAgeDate"
                         class="form-control"
-                        placeholder="Descrição do serviço"
-                        [ngClass]="{'is-invalid': filterForm.get('description')?.invalid && filterForm.get('description')?.touched}"
+                        placeholder="Idade mínima"
+                        [ngClass]="{'is-invalid': filterForm.get('startAgeDate')?.invalid && filterForm.get('startAgeDate')?.touched}"
                       />
-                      <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                      <span class="glyphicon glyphicon-calendar form-control-feedback"></span>
                     </app-input>
                   </div>
-              
+                  
                   <div class="col-12 col-md-6 col-lg-4">
                     <app-input [showTip]="false">
-                      <p class="infoInputFilter">Dono do Pet</p>
+                      <p class="infoInputFilter">Idade até</p>
                       <input
-                        type="text"
-                        formControlName="petOwnerName"
+                        type="date"
+                        formControlName="endAgeDate"
                         class="form-control"
-                        placeholder="Nome do dono do pet"
-                        [ngClass]="{'is-invalid': filterForm.get('petOwnerName')?.invalid && filterForm.get('petOwnerName')?.touched}"
+                        placeholder="Idade limite"
+                        [ngClass]="{'is-invalid': filterForm.get('endAgeDate')?.invalid && filterForm.get('endAgeDate')?.touched}"
                       />
-                      <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                      <span class="glyphicon glyphicon-calendar form-control-feedback"></span>
                     </app-input>
                   </div>
+                  
                 </div>
               </div>
             </form>
@@ -66,7 +67,7 @@
 
     <div class="row row-cols-auto">
       <div>
-        <shared-button (click)="createNewServiceModalOpen()" data-bs-toggle="modal" data-bs-target="#createEditDeleteModal" [buttonText]="'Criar novo serviço'"></shared-button>
+        <shared-button (click)="createNewServiceModalOpen()" data-bs-toggle="modal" data-bs-target="#createEditDeleteModal" [buttonText]="'Criar novo pet'"></shared-button>
       </div>
       <div>
         <shared-button (click)="applyFilters()" [buttonText]="'Pesquisar'" [variant]="'dark'"></shared-button>
@@ -78,31 +79,30 @@
         <thead>
           <tr>
             <th scope="col"></th>
-            <th scope="col" class="d-none d-sm-table-cell">Nome do Pet</th>
-            <th scope="col">Serviço</th>
-            <th scope="col" class="d-none d-sm-table-cell">Descrição</th>
-            <th scope="col" class="d-none d-sm-table-cell">Preço</th>
+            <th scope="col" class="d-none d-sm-table-cell center-text">Nome do Pet</th>
+            <th scope="col" class="center-text">Tipo</th>
+            <th scope="col" class="d-none d-sm-table-cell center-text">Raça</th>
+            <th scope="col" class="d-none d-sm-table-cell center-text">Data de nascimento</th>
 
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let service of serviceHistory">
+          <tr *ngFor="let pet of pets">
             <td [width]="120">
               <div class="dropdown">
                 <button class="btn btn-secondary dropdown-toggle btn-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                   <i class="fas fa-cog"></i>
                 </button>
                 <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="#"><i class="fa-solid fa-circle-info"></i> Detalhes</a></li>
-                  <li><a class="dropdown-item" (click)="editServiceModalOpen(service)" data-bs-toggle="modal" data-bs-target="#createEditDeleteModal"><i class="fa-solid fa-pencil"></i> Editar</a></li>
-                  <li><a class="dropdown-item" (click)="deleteServiceModalOpen(service)" data-bs-toggle="modal" data-bs-target="#createEditDeleteModal"><i class="fa-solid fa-trash"></i> Excluir</a></li>
+                  <li><a class="dropdown-item" (click)="editServiceModalOpen(pet)" data-bs-toggle="modal" data-bs-target="#createEditDeleteModal"><i class="fa-solid fa-pencil"></i> Editar</a></li>
+                  <li><a class="dropdown-item" (click)="deleteServiceModalOpen(pet)" data-bs-toggle="modal" data-bs-target="#createEditDeleteModal"><i class="fa-solid fa-trash"></i> Excluir</a></li>
                 </ul>
               </div>
             </td>
-            <td class="d-none d-sm-table-cell">{{ service.pet?.name }}</td>
-            <td>{{ service.name }}</td>
-            <td class="d-none d-sm-table-cell">{{ service.description }}</td>
-            <td class="d-none d-sm-table-cell">{{ service.price | currency:'BRL':'symbol':'1.2-2' }}</td>
+            <td class="d-none d-sm-table-cell center-text">{{ pet.name }}</td>
+            <td class="center-text">{{ getPetTypeLabel(pet.petType) }}</td>
+            <td class="d-none d-sm-table-cell center-text">{{ pet.race }}</td>
+            <td class="d-none d-sm-table-cell center-text">{{ formatDate(pet.birthDate) }}</td>
           </tr>
         </tbody>
       </table>
@@ -121,7 +121,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body" 
-            *ngIf="textModal === ModalModeService.NovoServico || textModal === ModalModeService.EditandoServico">
+            *ngIf="textModal === ModalModePet.NovoServico || textModal === ModalModePet.EditandoServico">
             <form [formGroup]="createPetForm">              
               <div class="text-center my-3 ">
                 <div class="row g-3">
@@ -132,7 +132,7 @@
                         type="text"
                         formControlName="name"
                         class="form-control"
-                        placeholder="Nome do serviço"
+                        placeholder="Nome do pet"
                         [ngClass]="{'is-invalid': filterForm.get('name')?.invalid && filterForm.get('name')?.touched}"
                       />
                       <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
@@ -141,13 +141,13 @@
               
                   <div class="col-12 col-md-6 col-lg-4">
                     <app-input [showTip]="false">
-                      <p class="infoInputFilter">Descrição</p>
+                      <p class="infoInputFilter">Raça</p>
                       <input
                         type="text"
-                        formControlName="description"
+                        formControlName="race"
                         class="form-control"
-                        placeholder="Descrição do serviço"
-                        [ngClass]="{'is-invalid': filterForm.get('description')?.invalid && filterForm.get('description')?.touched}"
+                        placeholder="Raça do pet"
+                        [ngClass]="{'is-invalid': filterForm.get('race')?.invalid && filterForm.get('startAgeDate')?.touched}"
                       />
                       <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
                     </app-input>
@@ -155,13 +155,16 @@
               
                   <div class="col-12 col-md-6 col-lg-4">
                     <app-input [showTip]="false">
-                      <p class="infoInputFilter">Preço</p>
-                      <input
-                        type="number"
-                        formControlName="price"
-                        class="form-control"
-                        [ngClass]="{'is-invalid': filterForm.get('price')?.invalid && filterForm.get('price')?.touched}"
-                      />
+                      <p class="infoInputFilter">Tipo do Pet</p>
+                      <select *ngIf="textModal === ModalModePet.NovoServico" id="userSelect" formControlName="petType" class="form-select">
+                        <option *ngFor="let pet of petTypes" [value]="pet">{{ pet }}</option>                      </select>
+                      <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                      
+                      <select *ngIf="textModal === ModalModePet.EditandoServico" id="userSelect" formControlName="petType" class="form-select">
+                        <option [value]="editUserPetType">{{ editUserPetType }}</option>
+                      </select>
+
+                      
                       <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
                     </app-input>
                   </div>
@@ -170,38 +173,30 @@
 
               <div class="row">
                 <div class="col">
-                  <p class="infoInputFilter">Nome do usuário</p>
-                  <select *ngIf="textModal === ModalModeService.NovoServico" id="userSelect" formControlName="selectedUser" class="form-select">
-                    <option *ngFor="let user of users" [value]="user.id">{{ user.firstName }} {{ user.lastName }}</option>
-                  </select>
-                  <select *ngIf="textModal === ModalModeService.EditandoServico" id="userSelect" formControlName="selectedUser" class="form-select">
-                    <option [value]="editUserName">{{ editUserName }}</option>
-                  </select>
-                </div>
-                <div class="col">
                   
-                  <p class="infoInputFilter">Nome do pet</p>
-                  <select *ngIf="textModal === ModalModeService.NovoServico" id="petSelect" formControlName="selectedPetUser" class="form-select">
-                    <option *ngFor="let pet of pets" [value]="pet.id">{{ pet.name }}</option>
-                  </select>
-                  <select *ngIf="textModal === ModalModeService.EditandoServico" id="petSelect" formControlName="selectedPetUser" class="form-select">
-                    <option [value]="editUserPet">{{ editUserPet?.name }}</option>
-                  </select>
+                  <p class="infoInputFilter">Data de Nascimento</p>
+                  <input
+                    type="date"
+                    formControlName="birthDate"
+                    class="form-control "
+                    placeholder="Data de Nascimento"
+                    [ngClass]="{'is-invalid': createPetForm.get('birthDate')?.invalid && createPetForm.get('birthDate')?.touched}"
+                  />
 
                 </div>
               </div>
               
             </form>
           </div>
-          <div class="modal-body" *ngIf="textModal === ModalModeService.DeleteServico">
-            <h3>Tem certeza que deseja deletar o serviço "{{ selectedServiceToDelete.name }}"?</h3>
+          <div class="modal-body" *ngIf="textModal === ModalModePet.DeleteServico">
+            <h3>Tem certeza que deseja deletar o pet "{{ selectedPetToDelete.name }}"?</h3>
             <p>Essa ação é irreversível.</p>
           </div>
           <div class="modal-footer">
             <shared-button data-bs-dismiss="modal" [buttonText]="'Cancelar'"></shared-button>
-              <shared-button *ngIf="textModal === ModalModeService.NovoServico" (click)="createNewService()" [buttonText]="'Salvar'" [variant]="'dark'"></shared-button>
-              <shared-button *ngIf="textModal === ModalModeService.EditandoServico" (click)="editSelectedService()" [buttonText]="'Editar'" [variant]="'dark'"></shared-button>
-              <shared-button *ngIf="textModal === ModalModeService.DeleteServico" (click)="deleteService()" [buttonText]="'Excluir'" [variant]="'dark'"></shared-button>
+              <shared-button *ngIf="textModal === ModalModePet.NovoServico" (click)="createNewService()" [buttonText]="'Salvar'" [variant]="'dark'"></shared-button>
+              <shared-button *ngIf="textModal === ModalModePet.EditandoServico" (click)="editSelectedService()" [buttonText]="'Editar'" [variant]="'dark'"></shared-button>
+              <shared-button *ngIf="textModal === ModalModePet.DeleteServico" (click)="deletePet()" [buttonText]="'Excluir'" [variant]="'dark'"></shared-button>
             </div>
         </div>
       </div>

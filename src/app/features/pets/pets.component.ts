@@ -1,25 +1,23 @@
 import { Component, OnInit } from '@angular/core';
 import { SidebarComponent } from '../../shared/components/sidebar/sidebar.component';
-import { UserServiceHistory } from '../../core/services/serviceHistory';
-import { ServiceHistory, ServiceHistoryParams } from '../../shared/models/serviceHistory';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { PagedList } from "../../shared/models/genericPagedList";
 import { InputComponent } from '../../shared/components/input/input.component';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonComponent } from '../../shared/components/button/button.component';
-import { ServiceHistoryFilter } from '../../shared/models/serviceHistoryFilter';
 import { LoadComponent } from "../../shared/components/load/load.component";
 import { User } from '../../shared/models/user';
-import { UserServices } from '../../core/services/user';
-import { Pet } from '../../shared/models/pet';
+import { Pet, PetParams } from '../../shared/models/pet';
 import { PetService } from '../../core/services/Pet';
 import { ToastComponent } from "../../shared/components/toast/toast.component";
-import { ModalModeService } from '../../shared/Enums/modalmode';
+import { ModalModePet } from '../../shared/Enums/modalmode';
+import { PetsFilter } from '../../shared/models/petsFilter';
+import { EPetType } from '../../shared/Enums/epettype';
 
 declare var bootstrap: any;
 
 @Component({
-  selector: 'app-services',
+  selector: 'app-pets',
   standalone: true,
   imports: [
     SidebarComponent,
@@ -29,51 +27,54 @@ declare var bootstrap: any;
     ButtonComponent,
     LoadComponent,
     ToastComponent
-],
-  templateUrl: './services.component.html',
-  styleUrl: './services.component.css',
+  ],
+  templateUrl: './pets.component.html',
+  styleUrl: './pets.component.css',
+  providers: [DatePipe]
 })
-export class ServicesComponent implements OnInit {
-  selectedService: ServiceHistory | undefined;
-  serviceHistory:ServiceHistory[] = [];
+export class PetsComponent implements OnInit {
+  selectedPet: Pet | undefined;
+  pets: Pet[] = [];
   isLoading: boolean = true;
   isSuccess: boolean = false;
-  textModal: ModalModeService = ModalModeService.NovoServico;
+  textModal: ModalModePet = ModalModePet.NovoServico;
   users: User[] = [];
-  pets: Pet[] = [];
 
   filterForm!: FormGroup;
   createPetForm!: FormGroup;
 
-  editUserName: string | undefined;
   editUserPet: Pet | undefined;
+  editUserPetType: string = "";
 
-  ModalModeService = ModalModeService;
-  selectedServiceToDelete!: ServiceHistory;
+  ModalModePet = ModalModePet;
+  selectedPetToDelete!: Pet;
+
+  petTypes = Object.values(EPetType);
+  EPetType = EPetType;
 
   constructor(
-    private fb: FormBuilder, private userServiceHistory: UserServiceHistory, 
-    private userService: UserServices,
-    private petService: PetService
+    private fb: FormBuilder, private userPet: PetService, 
+    private petService: PetService,
+    private datePipe: DatePipe
   ) {}
+
 
     ngOnInit(): void {
       this.createPetForm = this.fb.group({
-        selectedUser: ['', Validators.required],
-        selectedPetUser: ['', Validators.required],
         name: this.fb.control('', Validators.required),
-        description: this.fb.control('', Validators.required),
-        price: this.fb.control(0, Validators.required),
+        petType: this.fb.control('', Validators.required),
+        race: this.fb.control('', Validators.required),
+        birthDate: this.fb.control(0, Validators.required),
       });
       
       this.filterForm = this.fb.group({
         name: this.fb.control(''),
-        description: this.fb.control(''),
-        petOwnerName: this.fb.control(''),
+        startAgeDate: this.fb.control(''),
+        endAgeDate: this.fb.control(''),
       });
 
       this.createPetForm.get('selectedUser')?.valueChanges.subscribe((userId) => {
-        if (userId && this.textModal === ModalModeService.NovoServico) {
+        if (userId && this.textModal === ModalModePet.NovoServico) {
           this.loadPetsByUserId(userId);
         }
       });
@@ -87,11 +88,11 @@ export class ServicesComponent implements OnInit {
   }
   
   applyFilters(): void {
-      const filters: ServiceHistoryFilter = this.filterForm.value;
+      const filters: PetsFilter = this.filterForm.value;
   
-      this.userServiceHistory.fetchServiceHistory(filters).subscribe((value: PagedList<ServiceHistory>) => {
-          this.serviceHistory = value.data.itens;
-          console.log(this.serviceHistory);
+      this.userPet.fetchPets(filters).subscribe((value: PagedList<Pet>) => {
+          this.pets = value.data.itens;
+          console.log(this.pets);
           this.isLoading = false;
       });
   }
@@ -112,49 +113,48 @@ export class ServicesComponent implements OnInit {
 
 
   createNewServiceModalOpen(): void {
-    this.textModal = ModalModeService.NovoServico
+    this.textModal = ModalModePet.NovoServico
     this.isLoading = true;
     this.cleanCreatePetForm()
 
     this.fetchUsers();
   }
 
-  editServiceModalOpen(service : ServiceHistory): void {
+  editServiceModalOpen(pet : Pet): void {
     this.isLoading = true;
 
-    console.log(service)
+    console.log(pet)
 
-    this.textModal = ModalModeService.EditandoServico
+    this.textModal = ModalModePet.EditandoServico
 
-    this.editUserName = service.pet?.userName;
-    this.editUserPet = service.pet;
-    this.selectedService = service;
+    this.editUserPetType = this.getPetTypeLabel(pet.petType);
+    this.editUserPet = pet;
+    this.selectedPet = pet;
 
     this.createPetForm.reset({
-      selectedUser: [this.editUserName],
-      selectedPetUser: [this.editUserPet],
-      name: service.name,
-      description: service.description,
-      price: service.price
+      name: pet.name,
+      petType: pet.petType,
+      race: pet.race,
+      birthDate: [this.formatDateForInput(this.editUserPet.birthDate)]
     });
 
     this.isLoading = false;
   }
 
-  deleteServiceModalOpen(serviceHistory: ServiceHistory): void {
+  deleteServiceModalOpen(pet: Pet): void {
     this.isLoading = true;
-    this.textModal = ModalModeService.DeleteServico
+    this.textModal = ModalModePet.DeleteServico
     this.cleanCreatePetForm()
 
-    this.selectedServiceToDelete = serviceHistory;
+    this.selectedPetToDelete = pet;
 
     this.fetchUsers();
   }
 
   fetchUsers(): void {
-    this.userService.fetchUsers().subscribe({
-      next: (response: PagedList<User>) => {
-        this.users = response.data.itens;
+    this.petService.fetchPets().subscribe({
+      next: (response: PagedList<Pet>) => {
+        this.pets = response.data.itens;
         this.isLoading = false;
       },
       error: (error) => {
@@ -164,17 +164,38 @@ export class ServicesComponent implements OnInit {
     });
   }
 
+  
   createNewService(): void {
     this.isLoading = true;
-    
-    const serviceParams: ServiceHistoryParams = {
+
+    const petTypeEnumMapping = {
+      Cachorro: 0,
+      Gato: 1,
+      Ave: 2,
+      Reptil: 3,
+      Roedor: 4,
+      Peixe: 5,
+      Anfibio: 6,
+      Inseto: 7,
+      Exotico: 8
+    };
+
+    const petTypeValue = this.createPetForm.get('petType')?.value;
+
+    const petTypeEnumValue = petTypeEnumMapping[petTypeValue as keyof typeof petTypeEnumMapping];
+
+    const birthDate = this.createPetForm.get('birthDate')?.value;
+
+    const birthDateUTC = new Date(birthDate).toISOString();
+
+    const serviceParams: PetParams = {
     name: this.createPetForm.get('name')?.value,
-    description: this.createPetForm.get('description')?.value,
-    price: this.createPetForm.get('price')?.value,
-    petId: this.createPetForm.get('selectedPetUser')?.value,
+    petType: petTypeEnumValue,
+    race: this.createPetForm.get('race')?.value,
+    birthDate: birthDateUTC,
   };
 
-  this.userServiceHistory.createServiceHistory(serviceParams).subscribe({
+  this.userPet.createPet(serviceParams).subscribe({
     next: (response) => {
       this.applyFilters();
       this.isSuccess = true;
@@ -194,16 +215,16 @@ export class ServicesComponent implements OnInit {
 
   editSelectedService(): void {
     this.isLoading = true;
-    
-    const serviceParams: ServiceHistoryParams = {
-    name: this.createPetForm.get('name')?.value,
-    description: this.createPetForm.get('description')?.value,
-    price: this.createPetForm.get('price')?.value,
+
+    const petParams: PetParams = {
     petId: this.editUserPet?.id || '',
-    serviceId: this.selectedService?.id
+    name: this.createPetForm.get('name')?.value,
+    petType: this.createPetForm.get('petType')?.value,
+    race: this.createPetForm.get('race')?.value,
+    birthDate: this.createPetForm.get('birthDate')?.value
   };
 
-  this.userServiceHistory.editServiceHistory(serviceParams).subscribe({
+  this.userPet.editPet(petParams).subscribe({
     next: (response) => {
       this.applyFilters();
       this.isSuccess = true;
@@ -221,14 +242,14 @@ export class ServicesComponent implements OnInit {
   });
   }
 
-  deleteService(): void {
+  deletePet(): void {
     this.isLoading = true;
-    this.textModal = ModalModeService.DeleteServico
+    this.textModal = ModalModePet.DeleteServico
     this.cleanCreatePetForm()
 
-    const id = this.selectedServiceToDelete?.id
+    const id = this.selectedPetToDelete?.id
 
-    this.userServiceHistory.deleteServiceHistory(id).subscribe({
+    this.userPet.deletePet(id).subscribe({
       next: (response) => {
         this.applyFilters();
         this.isSuccess = true;
@@ -248,4 +269,24 @@ export class ServicesComponent implements OnInit {
     this.fetchUsers();
   }
 
+  getPetTypeLabel(petType?: number): string {
+    const petTypeKeys = Object.keys(this.EPetType) as Array<keyof typeof EPetType>;
+
+    var resp = "desconhecido"
+    
+    if (petType) {
+      resp = this.EPetType[petTypeKeys[petType]]
+      return resp;
+    } 
+
+    return resp;
+  }
+
+  formatDate(dateString: string | null): string {
+    return dateString ? this.datePipe.transform(dateString, 'dd/MM/yyyy') || '' : '';
+  }
+
+  formatDateForInput(dateString: string): string {
+    return dateString ? dateString.split('T')[0] : '';
+  }
 }
