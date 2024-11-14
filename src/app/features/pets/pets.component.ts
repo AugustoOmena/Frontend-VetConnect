@@ -13,6 +13,8 @@ import { ToastComponent } from "../../shared/components/toast/toast.component";
 import { ModalModePet } from '../../shared/Enums/modalmode';
 import { PetsFilter } from '../../shared/models/petsFilter';
 import { EPetType } from '../../shared/Enums/epettype';
+import { petTypeEnumMapping } from '../../shared/mapping/petTypeEnumMapping';
+import { GeneralFormat } from '../../shared/format/generalFormat';
 
 declare var bootstrap: any;
 
@@ -26,11 +28,11 @@ declare var bootstrap: any;
     InputComponent,
     ButtonComponent,
     LoadComponent,
-    ToastComponent
+    ToastComponent,
   ],
   templateUrl: './pets.component.html',
   styleUrl: './pets.component.css',
-  providers: [DatePipe]
+  providers: [DatePipe, GeneralFormat]
 })
 export class PetsComponent implements OnInit {
   selectedPet: Pet | undefined;
@@ -55,8 +57,8 @@ export class PetsComponent implements OnInit {
   constructor(
     private fb: FormBuilder, private userPet: PetService, 
     private petService: PetService,
-    private datePipe: DatePipe
-  ) {}
+    public generalFormat: GeneralFormat
+    ) {}
 
 
     ngOnInit(): void {
@@ -135,7 +137,7 @@ export class PetsComponent implements OnInit {
       name: pet.name,
       petType: pet.petType,
       race: pet.race,
-      birthDate: [this.formatDateForInput(this.editUserPet.birthDate)]
+      birthDate: [this.generalFormat.formatDateForInput(this.editUserPet.birthDate)]
     });
 
     this.isLoading = false;
@@ -167,18 +169,6 @@ export class PetsComponent implements OnInit {
   
   createNewService(): void {
     this.isLoading = true;
-
-    const petTypeEnumMapping = {
-      Cachorro: 0,
-      Gato: 1,
-      Ave: 2,
-      Reptil: 3,
-      Roedor: 4,
-      Peixe: 5,
-      Anfibio: 6,
-      Inseto: 7,
-      Exotico: 8
-    };
 
     const petTypeValue = this.createPetForm.get('petType')?.value;
 
@@ -280,13 +270,5 @@ export class PetsComponent implements OnInit {
     } 
 
     return resp;
-  }
-
-  formatDate(dateString: string | null): string {
-    return dateString ? this.datePipe.transform(dateString, 'dd/MM/yyyy') || '' : '';
-  }
-
-  formatDateForInput(dateString: string): string {
-    return dateString ? dateString.split('T')[0] : '';
   }
 }
