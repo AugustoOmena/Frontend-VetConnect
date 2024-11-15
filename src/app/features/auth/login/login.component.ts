@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { LoginService } from '../../../core/services/login';
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { LoadComponent } from "../../../shared/components/load/load.component";
+import { AppService } from '../../../core/services/app.services';
 
 @Component({
   selector: 'app-login',
@@ -29,7 +30,12 @@ export class LoginComponent implements OnInit {
   successMessage: string = '';
   isLoading: boolean = false;
 
-  constructor(private fb: FormBuilder, private loginService: LoginService, private route: ActivatedRoute, private router: Router) {}
+  constructor(private fb: FormBuilder,
+              private loginService: LoginService,
+              private route: ActivatedRoute,
+              private router: Router,
+              private appService: AppService
+            ) {}
 
   ngOnInit(): void {
     this.loginForm = this.fb.group({
@@ -51,8 +57,10 @@ export class LoginComponent implements OnInit {
       .subscribe( 
         data => {
           this.successMessage = `Login Realizado com sucesso, Bem vindo!`;
-          console.log(data.data.accessToken)
+
           localStorage.setItem('accessToken', data.data.accessToken);
+          this.appService.storeUser(data.data.user);
+
           this.router.navigate(['home']);
           this.isLoading = false;
         },

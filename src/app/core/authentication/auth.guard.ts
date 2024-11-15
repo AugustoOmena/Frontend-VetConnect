@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivateChildFn, Router, RouterStateSnapshot } from '@angular/router';
+import { environment } from '../../../environments/environments';
 
 @Injectable({
     providedIn: 'root'
@@ -10,7 +11,7 @@ class LoggedInGuard {
     canActivate(
         route: ActivatedRouteSnapshot,
         state: RouterStateSnapshot): boolean {
-            const token = localStorage.getItem('accessToken');
+            const token = localStorage.getItem(environment.localStore.token);
 
             if (token) {
                 const tokenPayload = JSON.parse(atob(token.split('.')[1]));
