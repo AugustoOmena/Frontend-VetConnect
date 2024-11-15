@@ -1,6 +1,7 @@
 export enum EUserType
 {
-    Admin,
-    Client,
-    BackOffice
+    Cliente,
+    Getente,
+    Atendente,
+    Veterinário
 }
