@@ -106,6 +106,7 @@
           </tr>
         </tbody>
       </table>
+      <p *ngIf="pets.length == 0" class="center-text">Você não possui pets cadastrados.</p>
     </div>
 
     <shared-load *ngIf="isLoading"></shared-load>

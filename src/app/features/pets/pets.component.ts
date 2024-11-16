@@ -264,7 +264,7 @@ export class PetsComponent implements OnInit {
 
     var resp = "desconhecido"
     
-    if (petType) {
+    if (petType || petType == 0) {
       resp = this.EPetType[petTypeKeys[petType]]
       return resp;
     } 

@@ -44,7 +44,7 @@ export class UserServiceHistory {
             'Authorization': `Bearer ${token}`
         });
 
-        return this.http.post<BaseResponse>(`${environment.apiUrl}/v1/Backoffice/Create/ServiceByPetId/${params.petId}`, params, { headers }).pipe(
+        return this.http.post<BaseResponse>(`${environment.apiUrl}/v1/Backoffice/Create/ServiceHistory`, params, { headers }).pipe(
             tap(serviceHistory => this.responseData = serviceHistory)
           );
     }

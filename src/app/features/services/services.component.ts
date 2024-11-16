@@ -11,10 +11,13 @@ import { ServiceHistoryFilter } from '../../shared/models/serviceHistoryFilter';
 import { LoadComponent } from "../../shared/components/load/load.component";
 import { User } from '../../shared/models/user';
 import { UserServices } from '../../core/services/user';
-import { Pet } from '../../shared/models/pet';
 import { PetService } from '../../core/services/Pet';
 import { ToastComponent } from "../../shared/components/toast/toast.component";
 import { ModalModeService } from '../../shared/Enums/modalmode';
+import { ServiceType } from '../../shared/Enums/ServiceType';
+import { petTypeEnumMapping } from '../../shared/mapping/petTypeEnumMapping';
+import { ServiceTypeEnumMapping } from '../../shared/mapping/serviceTypeEnumMapping';
+
 
 declare var bootstrap: any;
 
@@ -34,19 +37,18 @@ declare var bootstrap: any;
   styleUrl: './services.component.css',
 })
 export class ServicesComponent implements OnInit {
-  selectedService: ServiceHistory | undefined;
+  serviceType: ServiceHistory | undefined;
   serviceHistory:ServiceHistory[] = [];
   isLoading: boolean = true;
   isSuccess: boolean = false;
   textModal: ModalModeService = ModalModeService.NovoServico;
   users: User[] = [];
-  pets: Pet[] = [];
+  serviceTypes = Object.values(ServiceType);
 
   filterForm!: FormGroup;
-  createPetForm!: FormGroup;
+  createServiceForm!: FormGroup;
 
-  editUserName: string | undefined;
-  editUserPet: Pet | undefined;
+  editServiceName: string | undefined;
 
   ModalModeService = ModalModeService;
   selectedServiceToDelete!: ServiceHistory;
@@ -58,32 +60,25 @@ export class ServicesComponent implements OnInit {
   ) {}
 
     ngOnInit(): void {
-      this.createPetForm = this.fb.group({
-        selectedUser: ['', Validators.required],
-        selectedPetUser: ['', Validators.required],
+      this.createServiceForm = this.fb.group({
+        serviceType: ['', Validators.required],
         name: this.fb.control('', Validators.required),
         description: this.fb.control('', Validators.required),
-        price: this.fb.control(0, Validators.required),
+        price: this.fb.control(0, Validators.required)
       });
       
       this.filterForm = this.fb.group({
         name: this.fb.control(''),
         description: this.fb.control(''),
-        petOwnerName: this.fb.control(''),
-      });
-
-      this.createPetForm.get('selectedUser')?.valueChanges.subscribe((userId) => {
-        if (userId && this.textModal === ModalModeService.NovoServico) {
-          this.loadPetsByUserId(userId);
-        }
+        price: this.fb.control(''),
       });
   
       this.applyFilters();
     }
 
   cleanCreatePetForm(){
-    this.createPetForm.reset();
-    this.createPetForm.get('price')?.setValue(0);
+    this.createServiceForm.reset();
+    this.createServiceForm.get('price')?.setValue(0);
   }
   
   applyFilters(): void {
@@ -91,32 +86,17 @@ export class ServicesComponent implements OnInit {
   
       this.userServiceHistory.fetchServiceHistory(filters).subscribe((value: PagedList<ServiceHistory>) => {
           this.serviceHistory = value.data.itens;
-          console.log(this.serviceHistory);
+          console.log("Here", this.serviceHistory);
           this.isLoading = false;
       });
   }
 
-  loadPetsByUserId(userId: string): void {
-    this.isLoading = true;
-    this.petService.fetchPetsByUserId(userId).subscribe({
-      next: (response: PagedList<Pet>) => {
-        this.pets = response.data.itens;
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error("Erro ao carregar pets:", error);
-        this.isLoading = false;
-      }
-    });
-  }
-
-
   createNewServiceModalOpen(): void {
-    this.textModal = ModalModeService.NovoServico
     this.isLoading = true;
-    this.cleanCreatePetForm()
+    this.textModal = ModalModeService.NovoServico
 
-    this.fetchUsers();
+    this.cleanCreatePetForm()
+    this.isLoading = false;
   }
 
   editServiceModalOpen(service : ServiceHistory): void {
@@ -126,13 +106,13 @@ export class ServicesComponent implements OnInit {
 
     this.textModal = ModalModeService.EditandoServico
 
-    this.editUserName = service.pet?.userName;
-    this.editUserPet = service.pet;
-    this.selectedService = service;
+    this.editServiceName = service.name;
 
-    this.createPetForm.reset({
-      selectedUser: [this.editUserName],
-      selectedPetUser: [this.editUserPet],
+    this.serviceType = service;
+
+    this.createServiceForm.reset({
+      selectedService: [this.editServiceName],
+
       name: service.name,
       description: service.description,
       price: service.price
@@ -147,31 +127,27 @@ export class ServicesComponent implements OnInit {
     this.cleanCreatePetForm()
 
     this.selectedServiceToDelete = serviceHistory;
-
-    this.fetchUsers();
+    this.isLoading = false;
   }
 
-  fetchUsers(): void {
-    this.userService.fetchUsers().subscribe({
-      next: (response: PagedList<User>) => {
-        this.users = response.data.itens;
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error("Erro ao carregar usuários:", error);
-        this.isLoading = false;
-      }
-    });
-  }
 
   createNewService(): void {
     this.isLoading = true;
+
+    const serviceTypeValue = this.createServiceForm.get('serviceType')?.value;
+
+    const selectedServiceTypeValue = ServiceTypeEnumMapping[serviceTypeValue as keyof typeof ServiceTypeEnumMapping];
+
+    console.log("Valor selecionado (ServiceType):", serviceTypeValue);
+    console.log("Valor correspondente no ServiceTypeEnumMapping:", selectedServiceTypeValue);
+
+
     
     const serviceParams: ServiceHistoryParams = {
-    name: this.createPetForm.get('name')?.value,
-    description: this.createPetForm.get('description')?.value,
-    price: this.createPetForm.get('price')?.value,
-    petId: this.createPetForm.get('selectedPetUser')?.value,
+    name: this.createServiceForm.get('name')?.value,
+    description: this.createServiceForm.get('description')?.value,
+    price: this.createServiceForm.get('price')?.value,
+    serviceType: selectedServiceTypeValue,
   };
 
   this.userServiceHistory.createServiceHistory(serviceParams).subscribe({
@@ -194,13 +170,20 @@ export class ServicesComponent implements OnInit {
 
   editSelectedService(): void {
     this.isLoading = true;
+
+     const serviceTypeValue = this.createServiceForm.get('serviceType')?.value;
+
+     const selectedServiceTypeValue = ServiceTypeEnumMapping[serviceTypeValue as keyof typeof ServiceTypeEnumMapping];
+ 
+     console.log("Valor selecionado (ServiceType):", serviceTypeValue);
+     console.log("Valor correspondente no ServiceTypeEnumMapping:", selectedServiceTypeValue);
     
     const serviceParams: ServiceHistoryParams = {
-    name: this.createPetForm.get('name')?.value,
-    description: this.createPetForm.get('description')?.value,
-    price: this.createPetForm.get('price')?.value,
-    petId: this.editUserPet?.id || '',
-    serviceId: this.selectedService?.id
+    serviceId: this.serviceType?.id,
+    name: this.createServiceForm.get('name')?.value,
+    description: this.createServiceForm.get('description')?.value,
+    price: this.createServiceForm.get('price')?.value,
+    serviceType: selectedServiceTypeValue
   };
 
   this.userServiceHistory.editServiceHistory(serviceParams).subscribe({
@@ -244,8 +227,15 @@ export class ServicesComponent implements OnInit {
         this.isLoading = false;
       }
     });
-
-    this.fetchUsers();
   }
 
+  getServiceTypeLabel(serviceType?: number): string {
+    if (serviceType === undefined || serviceType === null) {
+      return 'Desconhecido'; 
+    }
+  
+    const serviceTypeLabel = ServiceTypeEnumMapping[serviceType];
+  
+    return serviceTypeLabel ? serviceTypeLabel : 'Desconhecido';
+  }
 }

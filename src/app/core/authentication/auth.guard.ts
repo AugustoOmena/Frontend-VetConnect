@@ -22,7 +22,7 @@ class LoggedInGuard {
                     return true;
                 }
                 this.router.navigate(['/login'], { queryParams: { error: 'Erro de permissão' } });
-                    return false;
+                return false;
             }
             this.router.navigate(['/login'], { queryParams: { error: 'Erro de permissão' } });
             return false;

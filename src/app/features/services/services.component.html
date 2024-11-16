@@ -45,16 +45,16 @@
               
                   <div class="col-12 col-md-6 col-lg-4">
                     <app-input [showTip]="false">
-                      <p class="infoInputFilter">Dono do Pet</p>
+                      <p class="infoInputFilter">Preço até</p>
                       <input
-                        type="text"
-                        formControlName="petOwnerName"
+                        type="number"
+                        formControlName="price"
                         class="form-control"
-                        placeholder="Nome do dono do pet"
-                        [ngClass]="{'is-invalid': filterForm.get('petOwnerName')?.invalid && filterForm.get('petOwnerName')?.touched}"
+                        [ngClass]="{'is-invalid': filterForm.get('price')?.invalid && filterForm.get('price')?.touched}"
                       />
                       <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
-                    </app-input>
+                    </app-input>  
+
                   </div>
                 </div>
               </div>
@@ -78,8 +78,8 @@
         <thead>
           <tr>
             <th scope="col"></th>
-            <th scope="col" class="d-none d-sm-table-cell">Nome do Pet</th>
-            <th scope="col">Serviço</th>
+            <th scope="col" class="d-none d-sm-table-cell">Serviço</th>
+            <th scope="col">Tipo</th>
             <th scope="col" class="d-none d-sm-table-cell">Descrição</th>
             <th scope="col" class="d-none d-sm-table-cell">Preço</th>
 
@@ -93,19 +93,19 @@
                   <i class="fas fa-cog"></i>
                 </button>
                 <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="#"><i class="fa-solid fa-circle-info"></i> Detalhes</a></li>
                   <li><a class="dropdown-item" (click)="editServiceModalOpen(service)" data-bs-toggle="modal" data-bs-target="#createEditDeleteModal"><i class="fa-solid fa-pencil"></i> Editar</a></li>
                   <li><a class="dropdown-item" (click)="deleteServiceModalOpen(service)" data-bs-toggle="modal" data-bs-target="#createEditDeleteModal"><i class="fa-solid fa-trash"></i> Excluir</a></li>
                 </ul>
               </div>
             </td>
-            <td class="d-none d-sm-table-cell">{{ service.pet?.name }}</td>
-            <td>{{ service.name }}</td>
+            <td class="d-none d-sm-table-cell">{{ service.name }}</td>
+            <td>{{ getServiceTypeLabel(service.serviceType) }}</td>
             <td class="d-none d-sm-table-cell">{{ service.description }}</td>
             <td class="d-none d-sm-table-cell">{{ service.price | currency:'BRL':'symbol':'1.2-2' }}</td>
           </tr>
         </tbody>
       </table>
+      <p *ngIf="serviceHistory.length == 0" class="center-text">Você não possui serviços cadastrados.</p>
     </div>
 
     <shared-load *ngIf="isLoading"></shared-load>
@@ -122,10 +122,10 @@
           </div>
           <div class="modal-body" 
             *ngIf="textModal === ModalModeService.NovoServico || textModal === ModalModeService.EditandoServico">
-            <form [formGroup]="createPetForm">              
+            <form [formGroup]="createServiceForm">              
               <div class="text-center my-3 ">
-                <div class="row g-3">
-                  <div class="col-12 col-md-6 col-lg-4">
+                <div class="row">
+                  <div class="col">
                     <app-input [showTip]="false">
                       <p class="infoInputFilter">Nome</p>
                       <input
@@ -133,13 +133,11 @@
                         formControlName="name"
                         class="form-control"
                         placeholder="Nome do serviço"
-                        [ngClass]="{'is-invalid': filterForm.get('name')?.invalid && filterForm.get('name')?.touched}"
                       />
                       <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
                     </app-input>
                   </div>
-              
-                  <div class="col-12 col-md-6 col-lg-4">
+                  <div class="col">
                     <app-input [showTip]="false">
                       <p class="infoInputFilter">Descrição</p>
                       <input
@@ -147,20 +145,6 @@
                         formControlName="description"
                         class="form-control"
                         placeholder="Descrição do serviço"
-                        [ngClass]="{'is-invalid': filterForm.get('description')?.invalid && filterForm.get('description')?.touched}"
-                      />
-                      <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
-                    </app-input>
-                  </div>
-              
-                  <div class="col-12 col-md-6 col-lg-4">
-                    <app-input [showTip]="false">
-                      <p class="infoInputFilter">Preço</p>
-                      <input
-                        type="number"
-                        formControlName="price"
-                        class="form-control"
-                        [ngClass]="{'is-invalid': filterForm.get('price')?.invalid && filterForm.get('price')?.touched}"
                       />
                       <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
                     </app-input>
@@ -170,24 +154,24 @@
 
               <div class="row">
                 <div class="col">
-                  <p class="infoInputFilter">Nome do usuário</p>
-                  <select *ngIf="textModal === ModalModeService.NovoServico" id="userSelect" formControlName="selectedUser" class="form-select">
-                    <option *ngFor="let user of users" [value]="user.id">{{ user.firstName }} {{ user.lastName }}</option>
+                  <p class="infoInputFilter">Tipo de Serviço</p>
+                  <select *ngIf="textModal === ModalModeService.NovoServico" id="serviceType" formControlName="serviceType" class="form-select">
+                    <option *ngFor="let servicet of serviceTypes" [value]="servicet">{{ servicet }}</option>
                   </select>
-                  <select *ngIf="textModal === ModalModeService.EditandoServico" id="userSelect" formControlName="selectedUser" class="form-select">
-                    <option [value]="editUserName">{{ editUserName }}</option>
+                  <select *ngIf="textModal === ModalModeService.EditandoServico" id="serviceType" formControlName="serviceType" class="form-select">
+                    <option [value]="editServiceName">{{ editServiceName }}</option>
                   </select>
                 </div>
-                <div class="col">
-                  
-                  <p class="infoInputFilter">Nome do pet</p>
-                  <select *ngIf="textModal === ModalModeService.NovoServico" id="petSelect" formControlName="selectedPetUser" class="form-select">
-                    <option *ngFor="let pet of pets" [value]="pet.id">{{ pet.name }}</option>
-                  </select>
-                  <select *ngIf="textModal === ModalModeService.EditandoServico" id="petSelect" formControlName="selectedPetUser" class="form-select">
-                    <option [value]="editUserPet">{{ editUserPet?.name }}</option>
-                  </select>
-
+                <div class="col">      
+                    <app-input [showTip]="false">
+                      <p class="infoInputFilter">Preço</p>
+                      <input
+                        type="number"
+                        formControlName="price"
+                        class="form-control"
+                      />
+                      <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                    </app-input>  
                 </div>
               </div>
               

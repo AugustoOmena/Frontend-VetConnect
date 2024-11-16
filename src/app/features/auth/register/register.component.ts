@@ -33,7 +33,7 @@ export class RegisterComponent implements OnInit {
       phone: this.fb.control(''),
       email: this.fb.control('', [Validators.required, Validators.email ]),
       password: this.fb.control('', [Validators.required]),
-      userType: this.fb.control(1),
+      userType: this.fb.control(0),
     });
 
     // Recupere a mensagem de erro da URL

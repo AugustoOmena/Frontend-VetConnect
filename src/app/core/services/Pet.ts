@@ -48,7 +48,7 @@ export class PetService {
         const headers = new HttpHeaders({
             'Authorization': `Bearer ${token}`
         });
-        return this.http.get<PagedList<Pet>>(`${environment.apiUrl}/api/Pets/v1/List/Pets${this.filtro}`, { headers });
+        return this.http.get<PagedList<Pet>>(`${environment.apiUrl}/api/Pets/v1/List/LoggedUser/Pets${this.filtro}`, { headers });
     }
 
     createPet(params: PetParams): Observable<BaseResponse> {
