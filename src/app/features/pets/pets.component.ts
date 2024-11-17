@@ -39,7 +39,7 @@ export class PetsComponent implements OnInit {
   pets: Pet[] = [];
   isLoading: boolean = true;
   isSuccess: boolean = false;
-  textModal: ModalModePet = ModalModePet.NovoServico;
+  textModal: ModalModePet = ModalModePet.NovoPet;
   users: User[] = [];
 
   filterForm!: FormGroup;
@@ -76,7 +76,7 @@ export class PetsComponent implements OnInit {
       });
 
       this.createPetForm.get('selectedUser')?.valueChanges.subscribe((userId) => {
-        if (userId && this.textModal === ModalModePet.NovoServico) {
+        if (userId && this.textModal === ModalModePet.NovoPet) {
           this.loadPetsByUserId(userId);
         }
       });
@@ -115,7 +115,7 @@ export class PetsComponent implements OnInit {
 
 
   createNewServiceModalOpen(): void {
-    this.textModal = ModalModePet.NovoServico
+    this.textModal = ModalModePet.NovoPet
     this.isLoading = true;
     this.cleanCreatePetForm()
 
@@ -127,7 +127,7 @@ export class PetsComponent implements OnInit {
 
     console.log(pet)
 
-    this.textModal = ModalModePet.EditandoServico
+    this.textModal = ModalModePet.EditandoPet
 
     this.editUserPetType = this.getPetTypeLabel(pet.petType);
     this.editUserPet = pet;
@@ -145,7 +145,7 @@ export class PetsComponent implements OnInit {
 
   deleteServiceModalOpen(pet: Pet): void {
     this.isLoading = true;
-    this.textModal = ModalModePet.DeleteServico
+    this.textModal = ModalModePet.DeletePet
     this.cleanCreatePetForm()
 
     this.selectedPetToDelete = pet;
@@ -234,7 +234,7 @@ export class PetsComponent implements OnInit {
 
   deletePet(): void {
     this.isLoading = true;
-    this.textModal = ModalModePet.DeleteServico
+    this.textModal = ModalModePet.DeletePet
     this.cleanCreatePetForm()
 
     const id = this.selectedPetToDelete?.id

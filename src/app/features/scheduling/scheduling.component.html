@@ -1,3 +1,200 @@
 <dashboardUser-sidebar>
-    <h1>Agendamento de serviços</h1>
+    <div class="accordion accordion-flush" id="accordionFlushExample">
+      <div class="accordion-item" style="margin-bottom: 29px;">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" 
+            aria-controls="flush-collapseOne" style="padding-left: 0px;">
+            <h2>Meus Agendamentos</h2>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 4h18a1 1 0 0 1 .8 1.6L14 12v6a1 1 0 0 1-.5.87l-4 2A1 1 0 0 1 8 20v-8L2.2 5.6A1 1 0 0 1 3 4Z" fill="currentColor"/>
+            </svg>
+          </button>
+        </h2>
+        <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">       
+          <div>
+            <form [formGroup]="filterForm">
+              <div class="text-center my-3 ">
+                <div class="row g-3">
+                  <div class="col-12 col-md-6 col-lg-4">
+                    <app-input [showTip]="false">
+                      <p class="infoInputFilter">Nome do serviço</p>
+                      <input
+                        type="text"
+                        formControlName="name"
+                        class="form-control"
+                        placeholder="Nome do serviço"
+                        [ngClass]="{'is-invalid': filterForm.get('name')?.invalid && filterForm.get('name')?.touched}"
+                      />
+                      <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                    </app-input>
+                  </div>
+              
+                  <div class="col-12 col-md-6 col-lg-4">
+                    <app-input [showTip]="false">
+                      <p class="infoInputFilter">Descrição do serviço</p>
+                      <input
+                        type="text"
+                        formControlName="description"
+                        class="form-control"
+                        placeholder="Descrição do serviço"
+                        [ngClass]="{'is-invalid': filterForm.get('description')?.invalid && filterForm.get('description')?.touched}"
+                      />
+                      <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                    </app-input>
+                  </div>
+              
+                  <div class="col-12 col-md-6 col-lg-4">
+                    <app-input [showTip]="false">
+                      <p class="infoInputFilter">Preço até</p>
+                      <input
+                        type="number"
+                        formControlName="price"
+                        class="form-control"
+                        [ngClass]="{'is-invalid': filterForm.get('price')?.invalid && filterForm.get('price')?.touched}"
+                      />
+                      <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                    </app-input>  
+
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row row-cols-auto">
+      <div>
+        <shared-button (click)="createNewSchedulingModalOpen()" data-bs-toggle="modal" data-bs-target="#createEditDeleteModal" [buttonText]="'Novo agendamento'"></shared-button>
+      </div>
+      <div>
+        <shared-button (click)="applyFilters()" [buttonText]="'Pesquisar'" [variant]="'dark'"></shared-button>
+      </div>
+    </div>
+   
+    <div class="shadow-lg">
+      <table *ngIf="!isLoading" class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col"></th>
+            <th scope="col" class="d-none d-sm-table-cell center-text">Status Agendamento</th>
+            <th scope="col" class="center-text">Data Agendada</th>
+            <th scope="col" class="d-none d-sm-table-cell center-text">Termino</th>
+            <th scope="col" class="d-none d-sm-table-cell center-text">Pet</th>
+            <th scope="col" class="d-none d-sm-table-cell center-text">Tipo Serviço</th>
+            <th scope="col" class="d-none d-sm-table-cell center-text">Descrição</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let service of serviceHistory">
+            <td [width]="120">
+              <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle btn-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="fas fa-cog"></i>
+                </button>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" (click)="editServiceModalOpen(service)" data-bs-toggle="modal" data-bs-target="#createEditDeleteModal"><i class="fa-solid fa-pencil"></i> Editar</a></li>
+                  <li><a class="dropdown-item" (click)="deleteServiceModalOpen(service)" data-bs-toggle="modal" data-bs-target="#createEditDeleteModal"><i class="fa-solid fa-trash"></i> Excluir</a></li>
+                </ul>
+              </div>
+            </td>
+            <td class="center-text">
+                <span [ngClass]="getStatusClass(service.attendance.attendanceStatus)">{{ getStatusScheduling(service.attendance.attendanceStatus) }}</span>
+            </td>
+            <td class="center-text">{{ service.dateInitial | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td class="d-none d-sm-table-cell center-text">{{ service.dateEnd | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td class="d-none d-sm-table-cell center-text">{{ service.pet.name }}</td>
+            <td class="d-none d-sm-table-cell center-text">{{ getServiceType(service.serviceHistory.serviceType) }}</td>
+            <td class="d-none d-sm-table-cell center-text">{{ service.description }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <p *ngIf="serviceHistory.length == 0" class="center-text">Você não possui serviços cadastrados.</p>
+    </div>
+
+    <shared-load *ngIf="isLoading"></shared-load>
+    <shared-toast *ngIf="isSuccess"></shared-toast>
+
+    
+    <!-- Modal -->
+    <div class="modal fade" id="createEditDeleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">{{ textModal }}</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" 
+            *ngIf="textModal === ModalModeScheduling.NovoAgendamento || textModal ===  ModalModeScheduling.EditandoAgendamento">
+            <form [formGroup]="createServiceForm">              
+              <div class="text-center my-3 ">
+                <div class="row">
+                  <div class="col">
+                    <app-input [showTip]="false">
+                      <p class="infoInputFilter">Nome</p>
+                      <input
+                        type="text"
+                        formControlName="name"
+                        class="form-control"
+                        placeholder="Nome do serviço"
+                      />
+                      <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                    </app-input>
+                  </div>
+                  <div class="col">
+                    <app-input [showTip]="false">
+                      <p class="infoInputFilter">Descrição</p>
+                      <input
+                        type="text"
+                        formControlName="description"
+                        class="form-control"
+                        placeholder="Descrição do serviço"
+                      />
+                      <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                    </app-input>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col">
+                  <p class="infoInputFilter">Tipo de Serviço</p>
+                  <select *ngIf="textModal === ModalModeScheduling.NovoAgendamento" id="serviceType" formControlName="serviceType" class="form-select">
+                    <option *ngFor="let servicet of serviceTypes" [value]="servicet">{{ servicet }}</option>
+                  </select>
+                  <select *ngIf="textModal === ModalModeScheduling.EditandoAgendamento" id="serviceType" formControlName="serviceType" class="form-select">
+                    <option [value]="editServiceName">{{ editServiceName }}</option>
+                  </select>
+                </div>
+                <div class="col">      
+                    <app-input [showTip]="false">
+                      <p class="infoInputFilter">Preço</p>
+                      <input
+                        type="number"
+                        formControlName="price"
+                        class="form-control"
+                      />
+                      <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                    </app-input>  
+                </div>
+              </div>
+              
+            </form>
+          </div>
+          <div class="modal-body" *ngIf="textModal === ModalModeScheduling.DeleteAgendamento">
+            <h3>Tem certeza que deseja deletar o serviço "{{ selectedServiceToDelete.name }}"?</h3>
+            <p>Essa ação é irreversível.</p>
+          </div>
+          <div class="modal-footer">
+            <shared-button data-bs-dismiss="modal" [buttonText]="'Cancelar'"></shared-button>
+              <shared-button *ngIf="textModal === ModalModeScheduling.NovoAgendamento" (click)="createNewService()" [buttonText]="'Salvar'" [variant]="'dark'"></shared-button>
+              <shared-button *ngIf="textModal === ModalModeScheduling.EditandoAgendamento" (click)="editSelectedService()" [buttonText]="'Editar'" [variant]="'dark'"></shared-button>
+              <shared-button *ngIf="textModal === ModalModeScheduling.DeleteAgendamento" (click)="deleteService()" [buttonText]="'Excluir'" [variant]="'dark'"></shared-button>
+            </div>
+        </div>
+      </div>
+    </div>
+    
 </dashboardUser-sidebar>
+

@@ -1,6 +1,3 @@
-import { ServiceType } from "../Enums/ServiceType";
-import { Pet } from "./pet";
-
 export interface ServiceHistory {
     id: string;
     name: string;

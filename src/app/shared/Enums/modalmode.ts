@@ -5,7 +5,13 @@ export enum ModalModeService {
   }
 
   export enum ModalModePet {
-    NovoServico = "Novo Pet",
-    EditandoServico = "Editando Pet",
-    DeleteServico = "Deletar Pet"
+    NovoPet = "Novo Pet",
+    EditandoPet = "Editando Pet",
+    DeletePet = "Deletar Pet"
+  }
+
+  export enum ModalModeScheduling {
+    NovoAgendamento = "Novo Agendamento",
+    EditandoAgendamento = "Editando Agendamento",
+    DeleteAgendamento = "Deletar Agendamento"
   }

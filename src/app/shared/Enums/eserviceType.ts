@@ -1,4 +1,4 @@
-export enum ServiceType {
+export enum EServiceType {
     BanhoETosa = "Banho e Tosa",
     Veterinario = "Consultas Veterinárias",
     Vacinacao = "Vacinação",
