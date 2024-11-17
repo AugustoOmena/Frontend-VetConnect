@@ -7,6 +7,7 @@ import { LoginService } from '../../../core/services/login';
 import { ButtonComponent } from "../../../shared/components/button/button.component";
 import { LoadComponent } from "../../../shared/components/load/load.component";
 import { AppService } from '../../../core/services/app.services';
+import { EUserType } from '../../../shared/Enums/eusertype';
 
 @Component({
   selector: 'app-login',
@@ -61,7 +62,14 @@ export class LoginComponent implements OnInit {
           localStorage.setItem('accessToken', data.data.accessToken);
           this.appService.storeUser(data.data.user);
 
-          this.router.navigate(['home']);
+          if (data.data.user.userType != EUserType.Cliente)
+          {
+            this.router.navigate(['scheduling']);
+          } else
+          {
+            this.router.navigate(['home']);
+          }
+
           this.isLoading = false;
         },
         error => {

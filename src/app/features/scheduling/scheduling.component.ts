@@ -17,8 +17,12 @@ import { ServiceHistory, ServiceHistoryParams } from '../../shared/models/servic
 import { ServiceHistoryFilter } from '../../shared/models/serviceHistoryFilter';
 import { User } from '../../shared/models/user';
 import { SchedulingService } from '../../core/services/scheduling';
-import { Scheduling } from '../../shared/models/scheduling';
+import { Scheduling, SchedulingParams } from '../../shared/models/scheduling';
 import { EAttendanceStatus } from '../../shared/Enums/eattendancestatus';
+import { environment } from '../../../environments/environments';
+import { Pet } from '../../shared/models/pet';
+import { EUserType } from '../../shared/Enums/eusertype';
+import { AppService } from '../../core/services/app.services';
 
 declare var bootstrap: any;
 
@@ -44,6 +48,8 @@ export class SchedulingComponent implements OnInit {
   isSuccess: boolean = false;
   textModal: ModalModeScheduling = ModalModeScheduling.NovoAgendamento;
   users: User[] = [];
+  pets: Pet[] = [];
+  services: ServiceHistory[] = [];
   serviceTypes = Object.values(EServiceType);
 
   filterForm!: FormGroup;
@@ -60,24 +66,26 @@ export class SchedulingComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder, 
-    private userServiceHistory: UserServiceHistory, 
-    private schedulingServiceHistory: SchedulingService, 
-    private userService: UserServices,
-    private petService: PetService
+    private schedulingServiceHistory: SchedulingService,
+    private ServiceHistory: SchedulingService,
+    private userServiceHistory: UserServiceHistory,
+    private petService: PetService,
+    private appService: AppService
   ) {}
 
     ngOnInit(): void {
       this.createServiceForm = this.fb.group({
-        serviceType: ['', Validators.required],
-        name: this.fb.control('', Validators.required),
+        initialDate: ['', Validators.required],
+        endDate: this.fb.control('', Validators.required),
         description: this.fb.control('', Validators.required),
-        price: this.fb.control(0, Validators.required)
+        serviceId: this.fb.control(0, Validators.required),
+        petId: this.fb.control(0, Validators.required),
       });
       
       this.filterForm = this.fb.group({
-        name: this.fb.control(''),
         description: this.fb.control(''),
-        price: this.fb.control(''),
+        startDate: this.fb.control(''),
+        endDate: this.fb.control(''),
       });
   
       this.applyFilters();
@@ -98,8 +106,43 @@ export class SchedulingComponent implements OnInit {
       });
   }
 
+  loadServicesByUser(): void {
+    this.isLoading = true;
+    this.userServiceHistory.fetchServiceHistoryToClient().subscribe({
+      next: (response: PagedList<ServiceHistory>) => {
+        this.services = response.data.itens;
+      },
+      error: (error) => {
+        console.error("Erro ao carregar os serviços cadastrados:", error);
+      }
+    });
+  }
+
+
+  loadPetsByUser(): void {
+    this.isLoading = true;
+
+    const accessUser = JSON.parse(localStorage.getItem(environment.localStore.user) || '{}');
+
+    const userId = accessUser?.id;
+
+    this.petService.fetchPetsByUserId(userId).subscribe({
+      next: (response: PagedList<Pet>) => {
+        this.pets = response.data.itens;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error("Erro ao carregar pets:", error);
+        this.isLoading = false;
+      }
+    });
+  }
+
+
   createNewSchedulingModalOpen(): void {
     this.isLoading = true;
+    this.loadServicesByUser();
+    this.loadPetsByUser();
     this.textModal = ModalModeScheduling.NovoAgendamento
 
     this.cleanCreatePetForm()
@@ -141,23 +184,15 @@ export class SchedulingComponent implements OnInit {
   createNewService(): void {
     this.isLoading = true;
 
-    const serviceTypeValue = this.createServiceForm.get('serviceType')?.value;
-
-    const selectedServiceTypeValue = ServiceTypeEnumMapping[serviceTypeValue as keyof typeof ServiceTypeEnumMapping];
-
-    console.log("Valor selecionado (ServiceType):", serviceTypeValue);
-    console.log("Valor correspondente no ServiceTypeEnumMapping:", selectedServiceTypeValue);
-
-
-    
-    const serviceParams: ServiceHistoryParams = {
-    name: this.createServiceForm.get('name')?.value,
+    const serviceParams: SchedulingParams = {
+    initialDate: this.createServiceForm.get('initialDate')?.value,
+    endDate: this.createServiceForm.get('endDate')?.value,
     description: this.createServiceForm.get('description')?.value,
-    price: this.createServiceForm.get('price')?.value,
-    serviceType: selectedServiceTypeValue,
+    serviceId: this.createServiceForm.get('serviceId')?.value,
+    petId: this.createServiceForm.get('petId')?.value,
   };
 
-  this.userServiceHistory.createServiceHistory(serviceParams).subscribe({
+  this.schedulingServiceHistory.createScheduling(serviceParams).subscribe({
     next: (response) => {
       this.applyFilters();
       this.isSuccess = true;
@@ -193,22 +228,22 @@ export class SchedulingComponent implements OnInit {
     serviceType: selectedServiceTypeValue
   };
 
-  this.userServiceHistory.editServiceHistory(serviceParams).subscribe({
-    next: (response) => {
-      this.applyFilters();
-      this.isSuccess = true;
-      setTimeout(() => {
-        this.isSuccess = false;
-      }, 1200);  
-      const myModalEl = document.getElementById('createEditDeleteModal');
-          const modal = bootstrap.Modal.getInstance(myModalEl);
-          modal.hide(); 
-    },
-    error: (error) => {
-      console.error("Erro ao editar serviço:", error);
-      this.isLoading = false;
-    }
-  });
+  // this.userServiceHistory.editServiceHistory(serviceParams).subscribe({
+  //   next: (response) => {
+  //     this.applyFilters();
+  //     this.isSuccess = true;
+  //     setTimeout(() => {
+  //       this.isSuccess = false;
+  //     }, 1200);  
+  //     const myModalEl = document.getElementById('createEditDeleteModal');
+  //         const modal = bootstrap.Modal.getInstance(myModalEl);
+  //         modal.hide(); 
+  //   },
+  //   error: (error) => {
+  //     console.error("Erro ao editar serviço:", error);
+  //     this.isLoading = false;
+  //   }
+  // });
   }
 
   deleteService(): void {
@@ -218,22 +253,22 @@ export class SchedulingComponent implements OnInit {
 
     const id = this.selectedServiceToDelete?.id
 
-    this.userServiceHistory.deleteServiceHistory(id).subscribe({
-      next: (response) => {
-        this.applyFilters();
-        this.isSuccess = true;
-        setTimeout(() => {
-          this.isSuccess = false;
-        }, 1200);  
-        const myModalEl = document.getElementById('createEditDeleteModal');
-            const modal = bootstrap.Modal.getInstance(myModalEl);
-            modal.hide(); 
-      },
-      error: (error) => {
-        console.error("Erro ao editar serviço:", error);
-        this.isLoading = false;
-      }
-    });
+    // this.userServiceHistory.deleteServiceHistory(id).subscribe({
+    //   next: (response) => {
+    //     this.applyFilters();
+    //     this.isSuccess = true;
+    //     setTimeout(() => {
+    //       this.isSuccess = false;
+    //     }, 1200);  
+    //     const myModalEl = document.getElementById('createEditDeleteModal');
+    //         const modal = bootstrap.Modal.getInstance(myModalEl);
+    //         modal.hide(); 
+    //   },
+    //   error: (error) => {
+    //     console.error("Erro ao editar serviço:", error);
+    //     this.isLoading = false;
+    //   }
+    // });
   }
 
   getServiceTypeLabel(serviceType?: number): string {
@@ -287,4 +322,6 @@ export class SchedulingComponent implements OnInit {
         return 'badge rounded-pill text-bg-light';
     }
   }
+
+  validateProfile = (profiles: EUserType[]) => this.appService.validateProfile(profiles);
 }

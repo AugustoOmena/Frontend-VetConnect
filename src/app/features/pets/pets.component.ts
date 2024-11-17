@@ -15,6 +15,8 @@ import { PetsFilter } from '../../shared/models/petsFilter';
 import { EPetType } from '../../shared/Enums/epettype';
 import { petTypeEnumMapping } from '../../shared/mapping/petTypeEnumMapping';
 import { GeneralFormat } from '../../shared/format/generalFormat';
+import { EUserType } from '../../shared/Enums/eusertype';
+import { AppService } from '../../core/services/app.services';
 
 declare var bootstrap: any;
 
@@ -57,7 +59,8 @@ export class PetsComponent implements OnInit {
   constructor(
     private fb: FormBuilder, private userPet: PetService, 
     private petService: PetService,
-    public generalFormat: GeneralFormat
+    public generalFormat: GeneralFormat,
+    private appService: AppService
     ) {}
 
 
@@ -94,7 +97,6 @@ export class PetsComponent implements OnInit {
   
       this.userPet.fetchPets(filters).subscribe((value: PagedList<Pet>) => {
           this.pets = value.data.itens;
-          console.log(this.pets);
           this.isLoading = false;
       });
   }
@@ -124,8 +126,6 @@ export class PetsComponent implements OnInit {
 
   editServiceModalOpen(pet : Pet): void {
     this.isLoading = true;
-
-    console.log(pet)
 
     this.textModal = ModalModePet.EditandoPet
 
@@ -271,4 +271,6 @@ export class PetsComponent implements OnInit {
 
     return resp;
   }
+
+  validateProfile = (profiles: EUserType[]) => this.appService.validateProfile(profiles);
 }

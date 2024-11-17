@@ -101,8 +101,6 @@ export class ServicesComponent implements OnInit {
   editServiceModalOpen(service : ServiceHistory): void {
     this.isLoading = true;
 
-    console.log(service)
-
     this.textModal = ModalModeScheduling.EditandoAgendamento
 
     this.editServiceName = service.name;
@@ -137,11 +135,6 @@ export class ServicesComponent implements OnInit {
 
     const selectedServiceTypeValue = ServiceTypeEnumMapping[serviceTypeValue as keyof typeof ServiceTypeEnumMapping];
 
-    console.log("Valor selecionado (ServiceType):", serviceTypeValue);
-    console.log("Valor correspondente no ServiceTypeEnumMapping:", selectedServiceTypeValue);
-
-
-    
     const serviceParams: ServiceHistoryParams = {
     name: this.createServiceForm.get('name')?.value,
     description: this.createServiceForm.get('description')?.value,
@@ -173,9 +166,6 @@ export class ServicesComponent implements OnInit {
      const serviceTypeValue = this.createServiceForm.get('serviceType')?.value;
 
      const selectedServiceTypeValue = ServiceTypeEnumMapping[serviceTypeValue as keyof typeof ServiceTypeEnumMapping];
- 
-     console.log("Valor selecionado (ServiceType):", serviceTypeValue);
-     console.log("Valor correspondente no ServiceTypeEnumMapping:", selectedServiceTypeValue);
     
     const serviceParams: ServiceHistoryParams = {
     serviceId: this.serviceType?.id,

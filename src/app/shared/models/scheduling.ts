@@ -15,6 +15,16 @@ export interface Scheduling {
     attendenceId: string;
     attendance: AttendanceVm;
   }
+
+  export interface SchedulingParams {
+    initialDate: string;
+    endDate: string;
+    description: string;
+    serviceId: string;
+    petId: string | undefined;
+  }
+
+
   
   export interface AttendanceVm {
     description: string;

@@ -4,7 +4,12 @@
         <h2 class="accordion-header">
           <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" 
             aria-controls="flush-collapseOne" style="padding-left: 0px;">
-            <h2>Meus Agendamentos</h2>
+            @if (validateProfile([0])) 
+            {
+              <h2>Meus Agendamentos</h2>
+            } @else {
+              <h2>Agendamentos</h2>
+            }   
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M3 4h18a1 1 0 0 1 .8 1.6L14 12v6a1 1 0 0 1-.5.87l-4 2A1 1 0 0 1 8 20v-8L2.2 5.6A1 1 0 0 1 3 4Z" fill="currentColor"/>
             </svg>
@@ -17,10 +22,10 @@
                 <div class="row g-3">
                   <div class="col-12 col-md-6 col-lg-4">
                     <app-input [showTip]="false">
-                      <p class="infoInputFilter">Nome do serviço</p>
+                      <p class="infoInputFilter">Descrição</p>
                       <input
                         type="text"
-                        formControlName="name"
+                        formControlName="description"
                         class="form-control"
                         placeholder="Nome do serviço"
                         [ngClass]="{'is-invalid': filterForm.get('name')?.invalid && filterForm.get('name')?.touched}"
@@ -31,10 +36,10 @@
               
                   <div class="col-12 col-md-6 col-lg-4">
                     <app-input [showTip]="false">
-                      <p class="infoInputFilter">Descrição do serviço</p>
+                      <p class="infoInputFilter">Começo em</p>
                       <input
-                        type="text"
-                        formControlName="description"
+                        type="datetime-local"
+                        formControlName="startDate"
                         class="form-control"
                         placeholder="Descrição do serviço"
                         [ngClass]="{'is-invalid': filterForm.get('description')?.invalid && filterForm.get('description')?.touched}"
@@ -45,10 +50,10 @@
               
                   <div class="col-12 col-md-6 col-lg-4">
                     <app-input [showTip]="false">
-                      <p class="infoInputFilter">Preço até</p>
+                      <p class="infoInputFilter">Termino até</p>
                       <input
-                        type="number"
-                        formControlName="price"
+                        type="datetime-local"
+                        formControlName="endDate"
                         class="form-control"
                         [ngClass]="{'is-invalid': filterForm.get('price')?.invalid && filterForm.get('price')?.touched}"
                       />
@@ -56,6 +61,11 @@
                     </app-input>  
 
                   </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+
                 </div>
               </div>
             </form>
@@ -94,7 +104,8 @@
                   <i class="fas fa-cog"></i>
                 </button>
                 <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" (click)="editServiceModalOpen(service)" data-bs-toggle="modal" data-bs-target="#createEditDeleteModal"><i class="fa-solid fa-pencil"></i> Editar</a></li>
+                  <li *ngIf="validateProfile([0])"><a class="dropdown-item" (click)="editServiceModalOpen(service)" data-bs-toggle="modal" data-bs-target="#createEditDeleteModal"><i class="fa-solid fa-pencil"></i> Editar</a></li>
+                  <li *ngIf="validateProfile([1, 2, 3])"><a class="dropdown-item" (click)="editServiceModalOpen(service)" data-bs-toggle="modal" data-bs-target="#createEditDeleteModal"><i class="fa-solid fa-bell-concierge"></i> Atender Agendamento</a></li>
                   <li><a class="dropdown-item" (click)="deleteServiceModalOpen(service)" data-bs-toggle="modal" data-bs-target="#createEditDeleteModal"><i class="fa-solid fa-trash"></i> Excluir</a></li>
                 </ul>
               </div>
@@ -135,7 +146,7 @@
                       <p class="infoInputFilter">Data Hora de Início</p>
                       <input
                         type="datetime-local"
-                        formControlName="name"
+                        formControlName="initialDate"
                         class="form-control"
                         placeholder="Nome do serviço"
                       />
@@ -147,7 +158,7 @@
                       <p class="infoInputFilter">Data Hora de Término</p>
                       <input
                         type="datetime-local"
-                        formControlName="description"
+                        formControlName="endDate"
                         class="form-control"
                         placeholder="Descrição do serviço"
                       />
@@ -160,10 +171,29 @@
               <div class="row">
                 <div class="col">
                   <p class="infoInputFilter">Serviço</p>
-                  <select *ngIf="textModal === ModalModeScheduling.NovoAgendamento" id="serviceType" formControlName="serviceType" class="form-select">
-                    <option *ngFor="let servicet of serviceTypes" [value]="servicet">{{ servicet }}</option>
+                  <select *ngIf="textModal === ModalModeScheduling.NovoAgendamento" 
+                        id="serviceType" 
+                        formControlName="serviceId" 
+                        class="form-select">
+                    <option *ngFor="let servicet of services" [value]="servicet.id">{{ servicet.name }}</option>
                   </select>
-                  <select *ngIf="textModal === ModalModeScheduling.EditandoAgendamento" id="serviceType" formControlName="serviceType" class="form-select">
+
+                  <select *ngIf="textModal === ModalModeScheduling.EditandoAgendamento" id="serviceType" formControlName="serviceId" class="form-select">
+                    <option [value]="editServiceName">{{ editServiceName }}</option>
+                  </select>
+                </div>
+
+
+                <div class="col">
+                  <p class="infoInputFilter">Qual Pet?</p>
+                  <select *ngIf="textModal === ModalModeScheduling.NovoAgendamento" 
+                        id="serviceType" 
+                        formControlName="petId" 
+                        class="form-select">
+                    <option *ngFor="let pet of pets" [value]="pet.id">{{ pet.name }}</option>
+                  </select>
+
+                  <select *ngIf="textModal === ModalModeScheduling.EditandoAgendamento" id="serviceType" formControlName="serviceId" class="form-select">
                     <option [value]="editServiceName">{{ editServiceName }}</option>
                   </select>
                 </div>
@@ -174,7 +204,7 @@
                     <app-input [showTip]="false">
                       <p class="infoInputFilter">Descrição</p>
                       <textarea
-                        formControlName="price"
+                        formControlName="description"
                         class="form-control"
                         placeholder="Escreva a descrição do agendamento..."
                       ></textarea>

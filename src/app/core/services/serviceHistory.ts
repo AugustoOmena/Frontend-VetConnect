@@ -49,6 +49,17 @@ export class UserServiceHistory {
           );
     }
 
+    fetchServiceHistoryToClient(): Observable<PagedList<ServiceHistory>> {
+        this.filtro = '';
+
+        const token = localStorage.getItem('accessToken');
+
+        const headers = new HttpHeaders({
+            'Authorization': `Bearer ${token}`
+        });
+        return this.http.get<PagedList<ServiceHistory>>(`${environment.apiUrl}/v1/Common/List/Services${this.filtro}`, { headers });
+    }
+
     editServiceHistory(params: ServiceHistoryParams): Observable<BaseResponse> {
         const token = localStorage.getItem('accessToken');
 

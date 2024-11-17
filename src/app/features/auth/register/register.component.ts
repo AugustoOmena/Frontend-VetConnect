@@ -45,7 +45,7 @@ export class RegisterComponent implements OnInit {
   register(){
     this.errorMessage = '';
     this.successMessage = '';
-    this.registrationService.register(this.registerForm.value.firstName, this.registerForm.value.lastName, this.registerForm.value.phone, this.registerForm.value.email, this.registerForm.value.password, 1)
+    this.registrationService.register(this.registerForm.value.firstName, this.registerForm.value.lastName, this.registerForm.value.phone, this.registerForm.value.email, this.registerForm.value.password, this.registerForm.value.userType)
       .subscribe( 
         data => {
           this.successMessage = `Conta criada com sucesso!`;
