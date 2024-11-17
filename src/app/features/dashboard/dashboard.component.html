@@ -11,16 +11,21 @@
                         {
                             <h5 class="custom-card-title">Meus Pets</h5>
                             <p class="custom-card-text" >Gerencie seus pets</p>
+                            <a routerLink="/pets">
+                                <div style="display: flex; justify-content: center; padding-top: 3%;">
+                                    <shared-button [buttonText]="'Ir para Pets'"></shared-button>
+                                </div>
+                            </a>
                         } @else 
                         {
                             <h5 class="custom-card-title">Serviços</h5>
                             <p class="custom-card-text" >Gerencie os serviços</p>
+                            <a routerLink="/scheduling">
+                                <div style="display: flex; justify-content: center; padding-top: 3%;">
+                                    <shared-button [buttonText]="'Ir para Serviços'"></shared-button>
+                                </div>
+                            </a>
                         }
-                        <a routerLink="/pets">
-                            <div style="display: flex; justify-content: center; padding-top: 3%;">
-                                <shared-button [buttonText]="'Ir para Serviços'"></shared-button>
-                            </div>
-                        </a>
                     </div>
                 </div>
             </div>
@@ -32,7 +37,7 @@
                         {
                             <h5 class="custom-card-title">Meus Agendamentos</h5>
                             <p class="custom-card-text" >Todos os serviços de seu pet!</p>
-                            <a routerLink="/services">
+                            <a routerLink="/scheduling">
                                 <div style="display: flex; justify-content: center; padding-top: 3%;">
                                     <shared-button [buttonText]="'Ir para Agendamentos'"></shared-button>
                                 </div>
@@ -41,7 +46,7 @@
                         {
                             <h5 class="custom-card-title">Atender Agendamentos</h5>
                             <p class="custom-card-text" >Atenda aos serviços solicitados</p>
-                            <a routerLink="/services">
+                            <a routerLink="/scheduling">
                                 <div style="display: flex; justify-content: center; padding-top: 3%;">
                                     <shared-button [buttonText]="'Ir para Atendimento'"></shared-button>
                                 </div>
