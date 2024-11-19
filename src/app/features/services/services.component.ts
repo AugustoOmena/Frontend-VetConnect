@@ -13,7 +13,7 @@ import { User } from '../../shared/models/user';
 import { UserServices } from '../../core/services/user';
 import { PetService } from '../../core/services/Pet';
 import { ToastComponent } from "../../shared/components/toast/toast.component";
-import { ModalModeScheduling } from '../../shared/Enums/modalmode';
+import { ModalModeScheduling, ModalModeService } from '../../shared/Enums/modalmode';
 import { EServiceType } from '../../shared/Enums/eserviceType';
 import { ServiceTypeEnumMapping } from '../../shared/mapping/serviceTypeEnumMapping';
 
@@ -40,7 +40,7 @@ export class ServicesComponent implements OnInit {
   serviceHistory:ServiceHistory[] = [];
   isLoading: boolean = true;
   isSuccess: boolean = false;
-  textModal: ModalModeScheduling = ModalModeScheduling.NovoAgendamento;
+  textModal: ModalModeService = ModalModeService.NovoServico;
   users: User[] = [];
   serviceTypes = Object.values(EServiceType);
 
@@ -50,6 +50,7 @@ export class ServicesComponent implements OnInit {
   editServiceName: string | undefined;
 
   ModalModeScheduling = ModalModeScheduling;
+  ModalModeService = ModalModeService;
   selectedServiceToDelete!: ServiceHistory;
 
   constructor(
@@ -85,14 +86,13 @@ export class ServicesComponent implements OnInit {
   
       this.userServiceHistory.fetchServiceHistory(filters).subscribe((value: PagedList<ServiceHistory>) => {
           this.serviceHistory = value.data.itens;
-          console.log("Here", this.serviceHistory);
           this.isLoading = false;
       });
   }
 
   createNewServiceModalOpen(): void {
     this.isLoading = true;
-    this.textModal = ModalModeScheduling.NovoAgendamento
+    this.textModal = ModalModeService.NovoServico
 
     this.cleanCreatePetForm()
     this.isLoading = false;
@@ -101,7 +101,7 @@ export class ServicesComponent implements OnInit {
   editServiceModalOpen(service : ServiceHistory): void {
     this.isLoading = true;
 
-    this.textModal = ModalModeScheduling.EditandoAgendamento
+    this.textModal = ModalModeService.EditandoServico
 
     this.editServiceName = service.name;
 
@@ -120,7 +120,7 @@ export class ServicesComponent implements OnInit {
 
   deleteServiceModalOpen(serviceHistory: ServiceHistory): void {
     this.isLoading = true;
-    this.textModal = ModalModeScheduling.DeleteAgendamento
+    this.textModal = ModalModeService.DeleteServico
     this.cleanCreatePetForm()
 
     this.selectedServiceToDelete = serviceHistory;
@@ -195,7 +195,7 @@ export class ServicesComponent implements OnInit {
 
   deleteService(): void {
     this.isLoading = true;
-    this.textModal = ModalModeScheduling.DeleteAgendamento
+    this.textModal = ModalModeService.DeleteServico
     this.cleanCreatePetForm()
 
     const id = this.selectedServiceToDelete?.id

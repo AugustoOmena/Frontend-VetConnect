@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { PetService } from '../../core/services/Pet';
 import { UserServiceHistory } from '../../core/services/serviceHistory';
-import { UserServices } from '../../core/services/user';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { InputComponent } from '../../shared/components/input/input.component';
 import { LoadComponent } from '../../shared/components/load/load.component';
@@ -23,6 +22,8 @@ import { environment } from '../../../environments/environments';
 import { Pet } from '../../shared/models/pet';
 import { EUserType } from '../../shared/Enums/eusertype';
 import { AppService } from '../../core/services/app.services';
+import { AttendanceParams } from '../../shared/models/attendance';
+import { AttendanceService } from '../../core/services/attendance';
 
 declare var bootstrap: any;
 
@@ -46,31 +47,36 @@ export class SchedulingComponent implements OnInit {
   serviceHistory: any[] = [];
   isLoading: boolean = true;
   isSuccess: boolean = false;
-  textModal: ModalModeScheduling = ModalModeScheduling.NovoAgendamento;
+  textModal: string = ModalModeService.NovoServico ;
   users: User[] = [];
   pets: Pet[] = [];
   services: ServiceHistory[] = [];
   serviceTypes = Object.values(EServiceType);
+  EServiceType = EServiceType;
 
   filterForm!: FormGroup;
   createServiceForm!: FormGroup;
+  attendanceForm!: FormGroup;
 
   editServiceName: string | undefined;
 
   ModalModeScheduling = ModalModeScheduling;
   selectedServiceToDelete!: ServiceHistory;
+  selectedSchedule!: any;
 
   EAttendanceStatus = EAttendanceStatus;
 
-  EServiceType = EServiceType;
+
+  attendanceStatus = Object.values(EAttendanceStatus);
 
   constructor(
     private fb: FormBuilder, 
     private schedulingServiceHistory: SchedulingService,
+    private attendanceService: AttendanceService,
     private ServiceHistory: SchedulingService,
     private userServiceHistory: UserServiceHistory,
     private petService: PetService,
-    private appService: AppService
+    private appService: AppService,
   ) {}
 
     ngOnInit(): void {
@@ -87,6 +93,12 @@ export class SchedulingComponent implements OnInit {
         startDate: this.fb.control(''),
         endDate: this.fb.control(''),
       });
+
+      this.attendanceForm = this.fb.group({
+        description: this.fb.control(''),
+        prescription: this.fb.control(''),
+        attendanceStatus: this.fb.control(0, Validators.required),
+      });
   
       this.applyFilters();
     }
@@ -95,13 +107,20 @@ export class SchedulingComponent implements OnInit {
     this.createServiceForm.reset();
     this.createServiceForm.get('price')?.setValue(0);
   }
+
+  cleanAttendanceForm(){
+    this.attendanceForm = this.fb.group({
+      description: this.fb.control(''),
+      prescription: this.fb.control(''),
+      attendanceStatus: this.fb.control(0, Validators.required),
+    });
+  }
   
   applyFilters(): void {
       const filters: ServiceHistoryFilter = this.filterForm.value;
   
       this.schedulingServiceHistory.fetchSchedulings(filters).subscribe((value: PagedList<Scheduling>) => {
           this.serviceHistory = value.data.itens;
-          console.log("Here", this.serviceHistory);
           this.isLoading = false;
       });
   }
@@ -152,8 +171,6 @@ export class SchedulingComponent implements OnInit {
   editServiceModalOpen(service : ServiceHistory): void {
     this.isLoading = true;
 
-    console.log(service)
-
     this.textModal = ModalModeScheduling.EditandoAgendamento
 
     this.editServiceName = service.name;
@@ -180,8 +197,47 @@ export class SchedulingComponent implements OnInit {
     this.isLoading = false;
   }
 
+  attendanceModalOpen(serviceHistory: ServiceHistory): void {
+    this.isLoading = true;
+    this.cleanCreatePetForm();
+    this.cleanAttendanceForm();
 
-  createNewService(): void {
+    this.selectedSchedule = serviceHistory;
+
+    this.selectedServiceToDelete = serviceHistory;
+    this.isLoading = false;
+  }
+
+  attendance(): void {
+    this.isLoading = true;
+
+    const attendanceParams: AttendanceParams = {
+    attendanceId: this.selectedSchedule.attendance.id,
+    description: this.attendanceForm.get('description')?.value,
+    prescription: this.attendanceForm.get('prescription')?.value,
+    attendanceStatus: +this.attendanceForm.get('attendanceStatus')?.value
+  };
+
+  this.attendanceService.editAttendance(attendanceParams).subscribe({
+    next: (response) => {
+      this.applyFilters();
+      this.isSuccess = true;
+      setTimeout(() => {
+        this.isSuccess = false;
+      }, 1200);  
+      const myModalEl = document.getElementById('AttendanceModal');
+          const modal = bootstrap.Modal.getInstance(myModalEl);
+          modal.hide(); 
+    },
+    error: (error) => {
+      console.error("Erro ao criar serviço:", error);
+      this.isLoading = false;
+    }
+  });
+  }
+
+
+  createNewSchedule(): void {
     this.isLoading = true;
 
     const serviceParams: SchedulingParams = {
@@ -213,13 +269,10 @@ export class SchedulingComponent implements OnInit {
   editSelectedService(): void {
     this.isLoading = true;
 
-     const serviceTypeValue = this.createServiceForm.get('serviceType')?.value;
+    const serviceTypeValue = this.createServiceForm.get('serviceType')?.value;
 
-     const selectedServiceTypeValue = ServiceTypeEnumMapping[serviceTypeValue as keyof typeof ServiceTypeEnumMapping];
+    const selectedServiceTypeValue = ServiceTypeEnumMapping[serviceTypeValue as keyof typeof ServiceTypeEnumMapping];
  
-     console.log("Valor selecionado (ServiceType):", serviceTypeValue);
-     console.log("Valor correspondente no ServiceTypeEnumMapping:", selectedServiceTypeValue);
-    
     const serviceParams: ServiceHistoryParams = {
     serviceId: this.serviceType?.id,
     name: this.createServiceForm.get('name')?.value,
@@ -248,7 +301,7 @@ export class SchedulingComponent implements OnInit {
 
   deleteService(): void {
     this.isLoading = true;
-    this.textModal = ModalModeScheduling.DeleteAgendamento
+    this.textModal = ModalModeService.DeleteServico
     this.cleanCreatePetForm()
 
     const id = this.selectedServiceToDelete?.id

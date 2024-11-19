@@ -121,7 +121,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body" 
-            *ngIf="textModal === ModalModeScheduling.NovoAgendamento || textModal === ModalModeScheduling.EditandoAgendamento">
+            *ngIf="textModal === ModalModeService.NovoServico || textModal === ModalModeService.EditandoServico">
             <form [formGroup]="createServiceForm">              
               <div class="text-center my-3 ">
                 <div class="row">
@@ -155,10 +155,10 @@
               <div class="row">
                 <div class="col">
                   <p class="infoInputFilter">Tipo de Serviço</p>
-                  <select *ngIf="textModal === ModalModeScheduling.NovoAgendamento" id="serviceType" formControlName="serviceType" class="form-select">
+                  <select *ngIf="textModal === ModalModeService.NovoServico" id="serviceType" formControlName="serviceType" class="form-select">
                     <option *ngFor="let servicet of serviceTypes" [value]="servicet">{{ servicet }}</option>
                   </select>
-                  <select *ngIf="textModal === ModalModeScheduling.EditandoAgendamento" id="serviceType" formControlName="serviceType" class="form-select">
+                  <select *ngIf="textModal === ModalModeService.EditandoServico" id="serviceType" formControlName="serviceType" class="form-select">
                     <option [value]="editServiceName">{{ editServiceName }}</option>
                   </select>
                 </div>
@@ -177,15 +177,15 @@
               
             </form>
           </div>
-          <div class="modal-body" *ngIf="textModal === ModalModeScheduling.DeleteAgendamento">
+          <div class="modal-body" *ngIf="textModal === ModalModeService.DeleteServico">
             <h3>Tem certeza que deseja deletar o serviço "{{ selectedServiceToDelete.name }}"?</h3>
             <p>Essa ação é irreversível.</p>
           </div>
           <div class="modal-footer">
             <shared-button data-bs-dismiss="modal" [buttonText]="'Cancelar'"></shared-button>
-              <shared-button *ngIf="textModal === ModalModeScheduling.NovoAgendamento" (click)="createNewService()" [buttonText]="'Salvar'" [variant]="'dark'"></shared-button>
-              <shared-button *ngIf="textModal === ModalModeScheduling.EditandoAgendamento" (click)="editSelectedService()" [buttonText]="'Editar'" [variant]="'dark'"></shared-button>
-              <shared-button *ngIf="textModal === ModalModeScheduling.DeleteAgendamento" (click)="deleteService()" [buttonText]="'Excluir'" [variant]="'dark'"></shared-button>
+              <shared-button *ngIf="textModal === ModalModeService.NovoServico" (click)="createNewService()" [buttonText]="'Salvar'" [variant]="'dark'"></shared-button>
+              <shared-button *ngIf="textModal === ModalModeService.EditandoServico" (click)="editSelectedService()" [buttonText]="'Editar'" [variant]="'dark'"></shared-button>
+              <shared-button *ngIf="textModal === ModalModeService.DeleteServico" (click)="deleteService()" [buttonText]="'Excluir'" [variant]="'dark'"></shared-button>
             </div>
         </div>
       </div>
