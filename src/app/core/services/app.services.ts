@@ -12,7 +12,6 @@ import { User } from "../../shared/models/user";
     public get sessionUser(): User {
       if (!this._sessionUser) {
         let jsonUserData = localStorage.getItem(environment.localStore.user);
-        console.log('O valor armazenado do app é ', jsonUserData)
 
         this._sessionUser = jsonUserData ? JSON.parse(jsonUserData) : null;
       }

@@ -49,7 +49,6 @@ export class RegisterComponent implements OnInit {
       .subscribe( 
         data => {
           this.successMessage = `Conta criada com sucesso!`;
-          console.log(data)
           this.router.navigate(['login']);
         },
         error => {
